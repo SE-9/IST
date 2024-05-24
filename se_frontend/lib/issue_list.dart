@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'issue_input_field.dart';
 import 'widgets/issue_card.dart'; // issue_card.dart 파일을 임포트합니다.
 
 class Issue {
@@ -77,12 +78,15 @@ class IssueListPageState extends State<IssueListPage> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Padding(
-              padding: const EdgeInsets.all(30.0),
+              padding:
+                  const EdgeInsets.symmetric(vertical: 30, horizontal: 150),
               child: TextField(
-                decoration: const InputDecoration(
-                  labelText: '찾으시려는 이슈를 입력하세요!',
-                  border: OutlineInputBorder(),
-                ),
+                decoration: InputDecoration(
+                    labelText: '찾으시려는 이슈를 입력하세요!',
+                    border: const OutlineInputBorder(),
+                    enabledBorder: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    )),
                 onChanged: _filterIssues,
               ),
             ),
@@ -101,6 +105,19 @@ class IssueListPageState extends State<IssueListPage> {
                 );
               },
             ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const IssueInputField(
+                    isPL: true,
+                  ),
+                ),
+              );
+            },
+            child: const Text('이슈 등록'),
           ),
         ],
       ),
