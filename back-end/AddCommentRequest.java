@@ -1,0 +1,46 @@
+package com.se.demo.dto;
+
+import com.se.demo.entity.Issue;
+import com.se.demo.entity.MemberEntity;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+import javax.xml.stream.events.Comment;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import com.se.demo.entity.CommentEntity; // 본인의 Comment 엔티티를 임포트
+import lombok.Setter;
+
+@NoArgsConstructor
+@Getter
+@AllArgsConstructor
+
+public class AddCommentRequest {
+    private MemberEntity createrId;
+    private String description;
+    private final String createdDate = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm"));
+    private Integer id;
+    private Long issueId;
+
+    //private Long issueId;
+
+    public Comment toEntity(Issue issue){
+        CommentEntity build = CommentEntity.builder()
+                .createrId(new MemberEntity())
+                .description(this.description)
+                .createdDate(LocalDateTime.now())
+               // .id(id)
+                .issue(issue)
+                .build();
+        return (Comment) build;
+
+
+    }
+
+    /*public Integer getIssueId() {
+        return Math.toIntExact(issue != null ? issue.getId() : 0);
+    }*/
+
+
+}
