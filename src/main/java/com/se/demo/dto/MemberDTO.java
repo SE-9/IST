@@ -5,9 +5,7 @@ import lombok.Setter;
 
 @Setter
 @Getter
-public class MemberDTOOfBW {
-    //view와 소통
-
+public class MemberDTO {
  private int user_id;
 
  private String nickname;
@@ -18,7 +16,6 @@ public class MemberDTOOfBW {
   return String.valueOf(user_id);
  }
 }
-
 /*
 class AdminDTOOfBW extends MemberDTOOfBW{
 }*/

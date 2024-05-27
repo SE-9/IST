@@ -2,6 +2,8 @@ package com.se.demo.controller;
 
 import com.se.demo.dto.MemberDTO;
 import com.se.demo.entity.MemberEntity;
+import com.se.demo.service.MemberService;
+import com.se.demo.utils.ApiUtils;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
