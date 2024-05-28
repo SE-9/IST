@@ -5,8 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="64d2dc35-c3bc-43e9-a4c9-0b8983c3b03c" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/controller/MemberControllerOfSY.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/controller/MemberControllerOfSY.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/entity/MemberEntityOfSY.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/entity/MemberEntityOfSY.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/controller/IssueController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/gradle.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/gradle.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/dto/IssueDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/dto/IssueDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/entity/BaseEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/entity/BaseEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/entity/IssueEntity.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/entity/IssueEntity.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/service/IssueService.java" beforeDir="false" afterPath="$PROJECT_DIR$/back-end/src/main/java/com/se/demo/service/IssueService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -33,9 +38,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 5
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 5
+}</component>
   <component name="ProjectId" id="2gqiIJVoAv13s2d0Wuy7k5P9xQM" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
@@ -44,7 +49,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "siyeon",
     "kotlin-language-version-configured": "true",
     "last_opened_file_path": "C:/Users/chrys/ist/IST",
     "node.js.detected.package.eslint": "true",
@@ -72,6 +77,7 @@
       <option name="presentableId" value="Default" />
       <updated>1716431426903</updated>
       <workItem from="1716431427993" duration="579000" />
+      <workItem from="1716828147449" duration="82000" />
     </task>
     <servers />
   </component>
