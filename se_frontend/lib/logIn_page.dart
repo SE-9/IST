@@ -14,7 +14,7 @@ class LoginPage extends StatelessWidget {
     String password = _passwordController.text;
 
     // 로그인 요청을 보낼 URL
-    Uri url = Uri.parse('http://127.0.0.1:8000/primary_disease_prediction/');
+    Uri url = Uri.parse('랄랄랄');
 
     // 요청 본문에 포함될 데이터
     Map<String, dynamic> requestBody = {
