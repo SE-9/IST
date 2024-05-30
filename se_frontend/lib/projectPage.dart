@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:se_frontend/box/issueBox.dart';
+import 'package:se_frontend/files/issueClass.dart';
 import 'package:se_frontend/issue_input_field.dart';
 
 // 개별 프로젝트 페이지
@@ -14,6 +16,20 @@ class ProjectPage extends StatelessWidget {
     required this.leader,
   });
 
+// 이슈 fetch
+  Future<List<Issue>> fetchIssues() async {
+    return List.generate(
+      9,
+      (index) => Issue(
+        title: 'Issue ${index + 1}',
+        assignee: 'Assignee ${index + 1}',
+        reporter: 'Reporter ${index + 1}',
+        status: 'new',
+        commentCount: 2,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; //넓이
@@ -26,7 +42,7 @@ class ProjectPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 244, 244, 244),
+          backgroundColor: Color.fromARGB(255, 255, 255, 255),
           title: const Row(children: [
             Text(
               "MY PROJECT",
@@ -34,7 +50,7 @@ class ProjectPage extends StatelessWidget {
             )
           ]),
           titleSpacing: 20),
-      body: Padding(
+      body: SingleChildScrollView(
         //프로젝트 제목 표시
         padding: const EdgeInsets.all(20.0),
         child: Column(
@@ -126,6 +142,45 @@ class ProjectPage extends StatelessWidget {
             const Text(
               "Current Issue",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 10),
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(15.0),
+                color: const Color.fromARGB(255, 146, 146, 146),
+              ),
+              height: 230,
+              width: double.infinity,
+              child: FutureBuilder<List<Issue>>(
+                future: fetchIssues(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return const Center(child: Text('Error loading issues'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No issues found'));
+                  }
+
+                  final issues = snapshot.data!;
+                  return Scrollbar(
+                    child: SingleChildScrollView(
+                      scrollDirection: Axis.horizontal,
+                      child: Row(
+                        children: issues.map((issue) {
+                          return IssueBox(
+                            title: issue.title,
+                            assignee: issue.assignee,
+                            reporter: issue.reporter,
+                            status: issue.status,
+                            description: '',
+                          );
+                        }).toList(),
+                      ),
+                    ),
+                  );
+                },
+              ),
             ),
           ],
         ),

@@ -3,6 +3,7 @@ import 'package:se_frontend/files/issueClass.dart';
 import 'package:se_frontend/files/projectClass.dart';
 import 'package:se_frontend/box/issueBox.dart';
 import 'package:se_frontend/box/projectBox.dart';
+import 'package:se_frontend/issue_list.dart';
 
 // 프로젝트 fetch
 Future<List<Project>> fetchProjects() async {
@@ -52,19 +53,31 @@ class MyDashboard extends StatelessWidget {
                 ),
                 const SizedBox(width: 30),
                 Expanded(
-                  child: TextField(
-                    decoration: InputDecoration(
-                      hintText: ' 찾으시는 이슈를 검색해보세요! ',
-                      hintStyle: const TextStyle(fontSize: 12), // 힌트 텍스트
-                      border: OutlineInputBorder(
+                  child: TextButton(
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 20.0, vertical: 15.0),
+                      backgroundColor: const Color.fromARGB(255, 241, 241, 241),
+                      shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(40.0),
-                        borderSide: BorderSide.none,
                       ),
-                      filled: true,
-                      fillColor: const Color.fromARGB(255, 241, 241, 241),
-                      contentPadding: const EdgeInsets.symmetric(
-                          horizontal: 20.0, vertical: 0),
-                      suffixIcon: const Icon(Icons.search), // 검색 아이콘
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => IssueListPage()),
+                      );
+                    },
+                    child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          '찾으시는 이슈를 검색해보세요!',
+                          style: TextStyle(fontSize: 12, color: Colors.black),
+                        ),
+                        Icon(Icons.search, color: Colors.black),
+                      ],
                     ),
                   ),
                 ),
