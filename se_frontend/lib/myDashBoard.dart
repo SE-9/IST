@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:se_frontend/issue_list.dart';
-import 'package:se_frontend/project.dart';
+import 'package:se_frontend/files/issueClass.dart';
+import 'package:se_frontend/files/projectClass.dart';
+import 'package:se_frontend/box/issueBox.dart';
+import 'package:se_frontend/box/projectBox.dart';
 
 // 프로젝트 fetch
 Future<List<Project>> fetchProjects() async {
-  await Future.delayed(const Duration(seconds: 1)); //네트워크 딜레이 효과..ㅎ
   return List.generate(
     //일단 20개 만듬
     20,
@@ -17,7 +18,6 @@ Future<List<Project>> fetchProjects() async {
 
 // 이슈 fetch
 Future<List<Issue>> fetchIssues() async {
-  await Future.delayed(const Duration(seconds: 1));
   return List.generate(
     9,
     (index) => Issue(
@@ -25,31 +25,9 @@ Future<List<Issue>> fetchIssues() async {
       assignee: 'Assignee ${index + 1}',
       reporter: 'Reporter ${index + 1}',
       status: 'new',
+      commentCount: 2,
     ),
   );
-}
-
-//프로젝트 클래스 정의
-class Project {
-  final String title;
-  final String description;
-
-  Project({required this.title, required this.description});
-}
-
-//이슈 클래스 정의
-class Issue {
-  final String title;
-  final String assignee;
-  final String reporter;
-  final String status;
-
-  Issue({
-    required this.title,
-    required this.assignee,
-    required this.reporter,
-    required this.status,
-  });
 }
 
 class MyDashboard extends StatelessWidget {
@@ -194,6 +172,7 @@ class MyDashboard extends StatelessWidget {
                                   assignee: issue.assignee,
                                   reporter: issue.reporter,
                                   status: issue.status,
+                                  description: '',
                                 );
                               }).toList(),
                             ),
@@ -205,120 +184,7 @@ class MyDashboard extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-          // 소영언니가 만든 부분으로 이동
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const IssueListPage(),
-                    ),
-                  );
-                },
-                child: const Text('소영언니 이거 누르면됩니당'),
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-// 박스로 플젝표현
-class ProjectBox extends StatelessWidget {
-  final String title; // 제목 저장 변수
-  final String description; // 설명 저장 변수
-  final String leader;
-
-  const ProjectBox({
-    required this.title,
-    required this.description,
-    required this.leader,
-  }); // 생성자로 title과 description을 받아옴
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      // 누르면 프로젝트 페이지로 이동하게 제스쳐
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder: (context) => ProjectPage(
-              title: title,
-              description: description,
-              leader: leader,
-            ),
-          ),
-        );
-      },
-      child: Container(
-        width: 250,
-        height: 150,
-        padding: const EdgeInsets.all(16.0),
-        margin: const EdgeInsets.only(right: 16.0),
-        decoration: BoxDecoration(
-          color: const Color.fromARGB(255, 250, 219, 234),
-          borderRadius: BorderRadius.circular(15.0),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: <Widget>[
-            Text(
-              title,
-              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-            ),
-            const SizedBox(height: 10),
-            Text(description),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-//박스로 이슈 표현
-class IssueBox extends StatelessWidget {
-  final String title; // 제목 저장 변수
-  final String assignee;
-  final String reporter;
-  final String status;
-
-  const IssueBox({
-    required this.title,
-    required this.assignee,
-    required this.reporter,
-    required this.status,
-  }); // 생성자로 title과 description을 받아옴
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      width: 250,
-      height: 150,
-      padding: const EdgeInsets.all(16.0),
-      margin: const EdgeInsets.only(right: 16.0),
-      decoration: BoxDecoration(
-        color: const Color.fromARGB(255, 250, 219, 234),
-        borderRadius: BorderRadius.circular(15.0),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Text(
-            title,
-            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          Text(status),
-          const SizedBox(height: 10),
-          Text(assignee),
-          Text(reporter),
+          )
         ],
       ),
     );

@@ -2,21 +2,25 @@ import 'package:flutter/material.dart';
 import 'package:se_frontend/issue_list.dart';
 
 // 개별 프로젝트 페이지
-class ProjectPage extends StatelessWidget {
-  final String title;
+class IssuePage extends StatelessWidget {
+  final String title; // 제목 저장 변수
   final String description;
-  final String leader;
+  final String assignee;
+  final String reporter;
+  final String status;
 
-  const ProjectPage({
+  const IssuePage({
     required this.title,
     required this.description,
-    required this.leader,
+    required this.assignee,
+    required this.reporter,
+    required this.status,
+    required leader,
   });
 
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; //넓이
-    double screenHeight = MediaQuery.of(context).size.height; //높이 가져옴
 
     // 화면 크기에 따라 폰트 크기와 패딩을 동적으로 설정
 
@@ -29,7 +33,7 @@ class ProjectPage extends StatelessWidget {
           backgroundColor: const Color.fromARGB(255, 244, 244, 244),
           title: const Row(children: [
             Text(
-              "MY PROJECT",
+              "MY ISSUE",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
             )
           ]),
@@ -70,7 +74,7 @@ class ProjectPage extends StatelessWidget {
             ), //************************리더란 */
             const SizedBox(height: 20),
             const Text(
-              "Leader",
+              "assignee",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 10),
@@ -83,7 +87,7 @@ class ProjectPage extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                leader,
+                assignee,
                 style: const TextStyle(
                     fontSize: 16, color: Color.fromARGB(199, 255, 255, 255)),
               ),
@@ -117,7 +121,13 @@ class ProjectPage extends StatelessWidget {
                   ),
                 ),
               ),
-            )
+            ),
+            //************************** 플젝에 대한 이슈 보기란 */
+            const SizedBox(height: 30),
+            const Text(
+              "Current Issue",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
           ],
         ),
       ),

@@ -1,6 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
-import 'package:se_frontend/signUp_page.dart';
+import 'package:se_frontend/forUser/signUp_page.dart';
 import 'package:http/http.dart' as http;
 import 'package:se_frontend/myDashBoard.dart';
 

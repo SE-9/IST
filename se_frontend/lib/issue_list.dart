@@ -1,21 +1,6 @@
 import 'package:flutter/material.dart';
 import 'widgets/issue_card.dart'; // issue_card.dart 파일을 임포트합니다.
-
-class Issue {
-  final String title;
-  final String status;
-  final String reporter;
-  final String assignee;
-  final int commentCount;
-
-  Issue({
-    required this.title,
-    required this.status,
-    required this.reporter,
-    required this.assignee,
-    required this.commentCount,
-  });
-}
+import 'package:se_frontend/files/issueClass.dart';
 
 class IssueListPage extends StatefulWidget {
   const IssueListPage({super.key});
