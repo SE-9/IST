@@ -7,7 +7,7 @@ class Issue {
   final String status;
   final String reporter;
   final String assignee;
-  final int commentCount;
+  final int commentCount; // 이거 표시 안 해도 될 듯함.
 
   Issue({
     required this.title,
@@ -27,6 +27,7 @@ class IssueListPage extends StatefulWidget {
 
 class IssueListPageState extends State<IssueListPage> {
   List<Issue> issues = [
+    // 백이랑 상의 필요.
     Issue(
         title: 'Issue 1',
         status: 'New',
