@@ -6,13 +6,15 @@ import 'package:se_frontend/box/projectBox.dart';
 import 'package:se_frontend/issue_list.dart';
 
 // 프로젝트 fetch
-Future<List<Project>> fetchProjects() async {
+Future<List<Project>> fetchProjects(String userId) async {
+  // 여기에서 실제 백엔드 API 호출 코드로 대체해야 합니다.
+  // 예시로 List.generate를 사용했습니다.
   return List.generate(
-    //일단 20개 만듬
     20,
     (index) => Project(
-      title: 'Project ${index + 1}',
-      description: 'Description of project ${index + 1}',
+      title: 'Project ${index + 1} for user $userId',
+      description: 'Description of project ${index + 1} for user $userId',
+      leader: 'Leader ${index + 1}',
     ),
   );
 }
@@ -22,16 +24,23 @@ Future<List<Issue>> fetchIssues() async {
   return List.generate(
     9,
     (index) => Issue(
+      id: index + 1,
       title: 'Issue ${index + 1}',
-      assignee: 'Assignee ${index + 1}',
-      reporter: 'Reporter ${index + 1}',
-      status: 'new',
+      description: 'Description of issue ${index + 1}',
+      reporter: index + 1,
+      date: DateTime.now(),
+      priority: IPriority.MAJOR,
+      projectId: 101,
+      fixer: index + 2,
+      assignee: index + 3,
+      state: IState.NEW,
     ),
   );
 }
 
 class MyDashboard extends StatelessWidget {
-  const MyDashboard({super.key});
+  final String nickname;
+  const MyDashboard({super.key, required this.nickname});
 
   @override
   Widget build(BuildContext context) {
@@ -108,8 +117,7 @@ class MyDashboard extends StatelessWidget {
                     height: 230,
                     width: double.infinity,
                     child: FutureBuilder<List<Project>>(
-                      //
-                      future: fetchProjects(),
+                      future: fetchProjects(nickname),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -129,10 +137,11 @@ class MyDashboard extends StatelessWidget {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: projects.map((project) {
-                                return ProjectBox(
-                                  title: project.title,
-                                  description: project.description,
-                                  leader: 'shu030929',
+                                return const ProjectBox(
+                                  title: '백에서 받아와야 함',
+                                  description: '//',
+                                  leader: '//',
+                                  // project: project,
                                 );
                               }).toList(),
                             ),
@@ -179,13 +188,7 @@ class MyDashboard extends StatelessWidget {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: issues.map((issue) {
-                                return IssueBox(
-                                  title: issue.title,
-                                  assignee: issue.assignee,
-                                  reporter: issue.reporter,
-                                  status: issue.status,
-                                  description: '',
-                                );
+                                return IssueBox(issue: issue);
                               }).toList(),
                             ),
                           ),

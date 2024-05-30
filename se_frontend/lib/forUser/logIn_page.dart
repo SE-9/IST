@@ -10,28 +10,48 @@ class LoginPage extends StatelessWidget {
   final TextEditingController _passwordController = TextEditingController();
 
   void loginUser(BuildContext context) async {
-    String userName = _userNameController.text;
+    String nickname = _userNameController.text;
     String password = _passwordController.text;
 
     // 로그인 요청을 보낼 URL
-    Uri url = Uri.parse('랄랄랄');
+    Uri url = Uri.parse('http://localhost:8081/user/login');
 
     // 요청 본문에 포함될 데이터
     Map<String, dynamic> requestBody = {
-      'userName': userName,
-      'password': password,
+      "nickname": nickname,
+      "password": password,
     };
+
     try {
       final response = await http.post(
         url,
         body: jsonEncode(requestBody),
         headers: {'Content-Type': 'application/json'},
       );
+
       if (response.statusCode == 200) {
-        Navigator.pushReplacement(
-            context, MaterialPageRoute(builder: (context) => LoginPage()));
+        final responseBody = jsonDecode(response.body);
+
+        // 응답 본문에서 nickname을 추출
+        if (responseBody != null && responseBody['user_id'] != null) {
+          String user_id = responseBody['user_id'];
+
+          // 로그인 성공 시 대시보드로 이동하며 닉네임 전달
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(
+              builder: (context) => MyDashboard(nickname: nickname),
+            ),
+          );
+        } else {
+          print('Error: nickname not found in response body');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('본문에 nickname 존재하지 않음')),
+          );
+        }
       } else {
         // 로그인 실패
+        print('Error: ${response.statusCode} ${response.reasonPhrase}');
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('로그인에 실패했습니다.')),
         );
@@ -47,11 +67,10 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    double screenWidth = MediaQuery.of(context).size.width; //넓이
-    double screenHeight = MediaQuery.of(context).size.height; //높이 가져옴
+    double screenWidth = MediaQuery.of(context).size.width; // 넓이
+    double screenHeight = MediaQuery.of(context).size.height; // 높이 가져옴
 
     // 화면 크기에 따라 폰트 크기와 패딩을 동적으로 설정
-
     double fontSize = screenWidth < 850 ? 18 : 18;
     double paddingSize = screenWidth < 850 ? 20 : 50;
 
@@ -96,7 +115,7 @@ class LoginPage extends StatelessWidget {
                         borderRadius: BorderRadius.circular(20), // 박스 각도 추가
                       ),
 
-                      //height: screenHeight * 0.7, //박스크기
+                      // height: screenHeight * 0.7, //박스크기
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
@@ -107,17 +126,19 @@ class LoginPage extends StatelessWidget {
                                 color: Colors.black,
                                 fontWeight: FontWeight.bold),
                           ),
-                          //유저이름 *********************************
+                          // 유저이름 *********************************
                           SizedBox(height: screenHeight * 0.06),
                           TextFormField(
+                            controller: _userNameController,
                             decoration: const InputDecoration(
                               labelText: 'User Name',
                             ),
                             obscureText: false,
                           ),
-                          //비번 *************************************
+                          // 비번 *************************************
                           SizedBox(height: screenHeight * 0.04),
                           TextFormField(
+                            controller: _passwordController,
                             decoration:
                                 const InputDecoration(labelText: 'Password'),
                             obscureText: true, // 비번 가리기
@@ -128,11 +149,7 @@ class LoginPage extends StatelessWidget {
                             width: formFieldWidth,
                             child: ElevatedButton(
                               onPressed: () {
-                                Navigator.push(
-                                  context,
-                                  MaterialPageRoute(
-                                      builder: (context) => MyDashboard()),
-                                );
+                                loginUser(context);
                               },
                               style: ElevatedButton.styleFrom(
                                 backgroundColor:
@@ -150,7 +167,6 @@ class LoginPage extends StatelessWidget {
                           ),
 
                           // or 사진 *************************************
-
                           SizedBox(height: screenHeight * 0.02),
                           Image.asset(
                             'assets/or.png',
@@ -158,7 +174,7 @@ class LoginPage extends StatelessWidget {
                             height: 40,
                           ),
 
-                          //read policy***************************************
+                          // read policy***************************************
                           SizedBox(height: screenHeight * 0.02),
                           TextButton(
                               onPressed: () {},
@@ -199,11 +215,9 @@ class LoginPage extends StatelessWidget {
                                 "don't have account? Sign Up",
                                 style: TextStyle(
                                   color: const Color.fromARGB(255, 0, 0, 0),
-
                                   fontSize: fontSize * 0.7,
-
                                   fontWeight: FontWeight.w200,
-                                  //decoration: TextDecoration.underline,
+                                  // decoration: TextDecoration.underline,
                                 ),
                               ),
                             ),

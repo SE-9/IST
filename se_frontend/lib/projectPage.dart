@@ -16,15 +16,20 @@ class ProjectPage extends StatelessWidget {
     required this.leader,
   });
 
-// 이슈 fetch
   Future<List<Issue>> fetchIssues() async {
     return List.generate(
       9,
       (index) => Issue(
+        id: index + 1,
         title: 'Issue ${index + 1}',
-        assignee: 'Assignee ${index + 1}',
-        reporter: 'Reporter ${index + 1}',
-        status: 'new',
+        description: 'Description of issue ${index + 1}',
+        reporter: index + 1,
+        date: DateTime.now(),
+        priority: IPriority.MAJOR,
+        projectId: 101,
+        fixer: index + 2,
+        assignee: index + 3,
+        state: IState.NEW,
       ),
     );
   }
@@ -34,21 +39,23 @@ class ProjectPage extends StatelessWidget {
     double screenWidth = MediaQuery.of(context).size.width; //넓이
 
     // 화면 크기에 따라 폰트 크기와 패딩을 동적으로 설정
-
     double fontSize = screenWidth < 850 ? 18 : 18;
     double formFieldWidth =
         screenWidth < 800 ? screenWidth * 0.8 : screenWidth * 0.3;
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
-          title: const Row(children: [
+        backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+        title: const Row(
+          children: [
             Text(
               "MY PROJECT",
               style: TextStyle(fontSize: 25, fontWeight: FontWeight.w500),
-            )
-          ]),
-          titleSpacing: 20),
+            ),
+          ],
+        ),
+        titleSpacing: 20,
+      ),
       body: SingleChildScrollView(
         //프로젝트 제목 표시
         padding: const EdgeInsets.all(20.0),
@@ -104,7 +111,6 @@ class ProjectPage extends StatelessWidget {
               ),
             ),
             //************************* 이슈 생성란 이동버튼 */
-
             const SizedBox(height: 50),
             Align(
               alignment: Alignment.bottomCenter,
@@ -116,9 +122,10 @@ class ProjectPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                          builder: (context) => const IssueInputField(
-                                isPL: true, // isPL 처리 필요.
-                              )),
+                        builder: (context) => const IssueInputField(
+                          isPL: true, // isPL 처리 필요.
+                        ),
+                      ),
                     );
                   },
                   style: ElevatedButton.styleFrom(
@@ -139,7 +146,7 @@ class ProjectPage extends StatelessWidget {
             //************************** 플젝에 대한 이슈 보기란 */
             const SizedBox(height: 30),
             const Text(
-              "Current Issue",
+              "Current Issues",
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 10),
@@ -168,11 +175,7 @@ class ProjectPage extends StatelessWidget {
                       child: Row(
                         children: issues.map((issue) {
                           return IssueBox(
-                            title: issue.title,
-                            assignee: issue.assignee,
-                            reporter: issue.reporter,
-                            status: issue.status,
-                            description: '',
+                            issue: issue,
                           );
                         }).toList(),
                       ),

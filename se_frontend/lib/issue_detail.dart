@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:se_frontend/widgets/detail_box.dart';
 import 'package:se_frontend/files/issueClass.dart';
+import 'package:se_frontend/widgets/detail_box.dart';
 
 class IssueDetail extends StatelessWidget {
   final Issue issue;
@@ -19,23 +19,23 @@ class IssueDetail extends StatelessWidget {
           children: [
             DetailBox(
               item: 'Description',
-              content: issue.description ?? 'No description',
+              content: issue.description,
             ),
             DetailBox(
               item: 'Status',
-              content: issue.status,
+              content: issue.state.toString().split('.').last,
             ),
             DetailBox(
               item: 'Priority',
-              content: issue.priority ?? 'No priority',
+              content: issue.priority.toString().split('.').last,
             ),
             DetailBox(
               item: 'Fixer',
-              content: issue.fixer ?? 'No fixer',
+              content: issue.fixer?.toString() ?? 'Unassigned',
             ),
             DetailBox(
               item: 'Assignee',
-              content: issue.assignee,
+              content: issue.assignee?.toString() ?? 'Unassigned',
             ),
             // Add more DetailBox widgets as needed
           ],

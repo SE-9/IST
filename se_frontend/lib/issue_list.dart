@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'issue_input_field.dart';
 import 'widgets/issue_card.dart';
-import 'issue_detail.dart'; // 추가
+import 'issue_detail.dart';
 import 'package:se_frontend/files/issueClass.dart';
 
 class IssueListPage extends StatefulWidget {
@@ -12,30 +12,7 @@ class IssueListPage extends StatefulWidget {
 }
 
 class IssueListPageState extends State<IssueListPage> {
-  List<Issue> issues = [
-    // 백이랑 상의 필요.
-    Issue(
-      title: 'Issue 1',
-      status: 'New',
-      reporter: 'User1',
-      assignee: 'User2',
-      //description: 'Description for issue 1',
-    ),
-    Issue(
-      title: 'Issue 2',
-      status: 'Closed',
-      reporter: 'User3',
-      assignee: 'User4',
-      //description: 'Description for issue 2',
-    ),
-    Issue(
-      title: 'Issue 3',
-      status: 'Closed',
-      reporter: 'User5',
-      assignee: 'User6',
-      //description: 'Description for issue 3',
-    ),
-  ];
+  List<Issue> issues = [];
 
   List<Issue> filteredIssues = [];
   String selectedStatus = 'All'; // 현재 선택된 상태를 저장
@@ -43,19 +20,54 @@ class IssueListPageState extends State<IssueListPage> {
   @override
   void initState() {
     super.initState();
-    filteredIssues = issues;
+    _fetchIssues();
+  }
+
+  void _fetchIssues() async {
+    // 여기서 백엔드에서 데이터를 가져오는 로직을 구현하세요.
+    // 예를 들어, API 요청을 통해 데이터를 받아올 수 있습니다.
+    // 받아온 데이터를 issues 리스트에 저장하고, 초기 필터링을 수행합니다.
+    setState(() {
+      issues = [
+        Issue(
+          id: 1,
+          title: 'Issue 1',
+          description: 'Description for Issue 1',
+          reporter: 1,
+          date: DateTime.now(),
+          priority: IPriority.MAJOR,
+          projectId: 101,
+          fixer: 2,
+          assignee: 3,
+          state: IState.NEW,
+        ),
+        Issue(
+          id: 2,
+          title: 'Issue 2',
+          description: 'Description for Issue 2',
+          reporter: 2,
+          date: DateTime.now(),
+          priority: IPriority.MINOR,
+          projectId: 102,
+          fixer: 3,
+          assignee: 4,
+          state: IState.RESOLVED,
+        ),
+        // 추가로 더 많은 이슈를 여기에 추가하세요.
+      ];
+      filteredIssues = issues;
+    });
   }
 
   void _filterIssues(String query) {
     final filtered = issues.where((issue) {
       final matchesTitle =
           issue.title.toLowerCase().contains(query.toLowerCase());
-      final matchesReporter =
-          issue.reporter.toLowerCase().contains(query.toLowerCase());
+      final matchesReporter = issue.reporter.toString().contains(query);
       final matchesAssignee =
-          issue.assignee.toLowerCase().contains(query.toLowerCase());
-      final matchesStatus =
-          selectedStatus == 'All' || issue.status == selectedStatus;
+          issue.assignee?.toString().contains(query) ?? false;
+      final matchesStatus = selectedStatus == 'All' ||
+          issue.state.toString().split('.').last == selectedStatus;
       return (matchesTitle || matchesReporter || matchesAssignee) &&
           matchesStatus;
     }).toList();
@@ -97,12 +109,12 @@ class IssueListPageState extends State<IssueListPage> {
                   },
                   items: <String>[
                     'All',
-                    'New',
-                    'Assigned',
-                    'Fixed',
-                    'Resolved',
-                    'Closed',
-                    'Reopened'
+                    'NEW',
+                    'ASSIGNED',
+                    'FIXED',
+                    'RESOLVED',
+                    'CLOSED',
+                    'REOPEND'
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -129,9 +141,9 @@ class IssueListPageState extends State<IssueListPage> {
                   },
                   child: IssueCard(
                     title: issue.title,
-                    status: issue.status,
-                    reporter: issue.reporter,
-                    assignee: issue.assignee,
+                    status: issue.state.toString().split('.').last,
+                    reporter: issue.reporter.toString(),
+                    assignee: issue.assignee?.toString() ?? 'Unassigned',
                   ),
                 );
               },

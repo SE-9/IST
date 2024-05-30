@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:se_frontend/files/issueClass.dart';
 
 class IssueCard extends StatelessWidget {
-  final String title, status, assignee, reporter;
+  final String title;
+  final String status;
+  final String assignee;
+  final String reporter;
 
   final greybackground = const Color(0xffD9D9D9);
 
@@ -12,6 +16,16 @@ class IssueCard extends StatelessWidget {
     required this.assignee,
     required this.reporter,
   });
+
+  factory IssueCard.fromIssue(Issue issue) {
+    return IssueCard(
+      title: issue.title,
+      status: issue.state.toString().split('.').last,
+      assignee:
+          issue.assignee != null ? issue.assignee.toString() : 'Unassigned',
+      reporter: issue.reporter.toString(),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
