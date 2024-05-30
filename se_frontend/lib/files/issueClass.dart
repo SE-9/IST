@@ -1,16 +1,29 @@
-// issueClass.dart
+enum IPriority { BLOCKER, CRITICAL, MAJOR, MINOR, TRIVIAL }
+
+enum IState { NEW, ASSIGNED, FIXED, RESOLVED, CLOSED, REOPEND }
+
 class Issue {
-  final String title;
-  final String assignee;
-  final String reporter;
-  final String status;
-  final int commentCount;
+  int id;
+  String title;
+  String description;
+  int reporter;
+  DateTime date;
+  IPriority priority;
+  int projectId;
+  int? fixer;
+  int? assignee;
+  IState state;
 
   Issue({
+    required this.id,
     required this.title,
-    required this.assignee,
+    required this.description,
     required this.reporter,
-    required this.status,
-    required this.commentCount,
+    required this.date,
+    required this.priority,
+    required this.projectId,
+    this.fixer,
+    this.assignee,
+    this.state = IState.NEW,
   });
 }

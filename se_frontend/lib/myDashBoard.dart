@@ -26,7 +26,6 @@ Future<List<Issue>> fetchIssues() async {
       assignee: 'Assignee ${index + 1}',
       reporter: 'Reporter ${index + 1}',
       status: 'new',
-      commentCount: 2,
     ),
   );
 }
@@ -66,7 +65,7 @@ class MyDashboard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => IssueListPage()),
+                            builder: (context) => const IssueListPage()),
                       );
                     },
                     child: const Row(

@@ -25,7 +25,6 @@ class ProjectPage extends StatelessWidget {
         assignee: 'Assignee ${index + 1}',
         reporter: 'Reporter ${index + 1}',
         status: 'new',
-        commentCount: 2,
       ),
     );
   }
@@ -42,7 +41,7 @@ class ProjectPage extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: Color.fromARGB(255, 255, 255, 255),
+          backgroundColor: const Color.fromARGB(255, 255, 255, 255),
           title: const Row(children: [
             Text(
               "MY PROJECT",

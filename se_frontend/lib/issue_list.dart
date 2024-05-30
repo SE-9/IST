@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'issue_input_field.dart';
 import 'widgets/issue_card.dart';
+import 'issue_detail.dart'; // 추가
 import 'package:se_frontend/files/issueClass.dart';
 
 class IssueListPage extends StatefulWidget {
@@ -14,23 +15,26 @@ class IssueListPageState extends State<IssueListPage> {
   List<Issue> issues = [
     // 백이랑 상의 필요.
     Issue(
-        title: 'Issue 1',
-        status: 'New',
-        reporter: 'User1',
-        assignee: 'User2',
-        commentCount: 5),
+      title: 'Issue 1',
+      status: 'New',
+      reporter: 'User1',
+      assignee: 'User2',
+      //description: 'Description for issue 1',
+    ),
     Issue(
-        title: 'Issue 2',
-        status: 'Closed',
-        reporter: 'User3',
-        assignee: 'User4',
-        commentCount: 2),
+      title: 'Issue 2',
+      status: 'Closed',
+      reporter: 'User3',
+      assignee: 'User4',
+      //description: 'Description for issue 2',
+    ),
     Issue(
-        title: 'Issue 3',
-        status: 'Closed',
-        reporter: 'User5',
-        assignee: 'User6',
-        commentCount: 4),
+      title: 'Issue 3',
+      status: 'Closed',
+      reporter: 'User5',
+      assignee: 'User6',
+      //description: 'Description for issue 3',
+    ),
   ];
 
   List<Issue> filteredIssues = [];
@@ -114,12 +118,21 @@ class IssueListPageState extends State<IssueListPage> {
               itemCount: filteredIssues.length,
               itemBuilder: (context, index) {
                 final issue = filteredIssues[index];
-                return IssueCard(
-                  title: issue.title,
-                  status: issue.status,
-                  reporter: issue.reporter,
-                  assignee: issue.assignee,
-                  commentCount: issue.commentCount,
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IssueDetail(issue: issue),
+                      ),
+                    );
+                  },
+                  child: IssueCard(
+                    title: issue.title,
+                    status: issue.status,
+                    reporter: issue.reporter,
+                    assignee: issue.assignee,
+                  ),
                 );
               },
             ),
