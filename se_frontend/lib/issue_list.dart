@@ -1,22 +1,7 @@
 import 'package:flutter/material.dart';
 import 'issue_input_field.dart';
 import 'widgets/issue_card.dart';
-
-class Issue {
-  final String title;
-  final String status;
-  final String reporter;
-  final String assignee;
-  final int commentCount; // 이거 표시 안 해도 될 듯함.
-
-  Issue({
-    required this.title,
-    required this.status,
-    required this.reporter,
-    required this.assignee,
-    required this.commentCount,
-  });
-}
+import 'package:se_frontend/files/issueClass.dart';
 
 class IssueListPage extends StatefulWidget {
   const IssueListPage({super.key});
