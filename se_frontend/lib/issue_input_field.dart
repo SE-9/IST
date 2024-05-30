@@ -29,7 +29,7 @@ class IssueInputFieldState extends State<IssueInputField> {
           widget.isPL && _assigneeController.text.isNotEmpty
               ? _assigneeController.text
               : null;
-      const String reporter = 'system_user'; // 시스템이 자동으로 채워줌
+      const String reporter = 'system_user'; // 시스템이 자동으로 채워줌, 처리 필요.
       final String reportedDate =
           DateFormat('yyyy-MM-dd').format(DateTime.now()); // 현재 날짜
 

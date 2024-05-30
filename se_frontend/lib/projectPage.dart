@@ -102,7 +102,7 @@ class ProjectPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                           builder: (context) => const IssueInputField(
-                                isPL: true,
+                                isPL: true, // isPL 처리 필요.
                               )),
                     );
                   },
