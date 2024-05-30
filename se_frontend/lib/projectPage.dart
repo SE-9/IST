@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:se_frontend/issue_list.dart';
+import 'package:se_frontend/issue_input_field.dart';
 
 // 개별 프로젝트 페이지
 class ProjectPage extends StatelessWidget {
@@ -8,6 +8,7 @@ class ProjectPage extends StatelessWidget {
   final String leader;
 
   const ProjectPage({
+    super.key,
     required this.title,
     required this.description,
     required this.leader,
@@ -99,11 +100,14 @@ class ProjectPage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => IssueListPage()),
+                      MaterialPageRoute(
+                          builder: (context) => const IssueInputField(
+                                isPL: true,
+                              )),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: Color.fromARGB(255, 255, 205, 220),
+                      backgroundColor: const Color.fromARGB(255, 255, 205, 220),
                       fixedSize: const Size.fromHeight(50),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20))),
