@@ -10,6 +10,8 @@ import com.se.demo.repository.IssueRepository;
 import com.se.demo.repository.MemberRepository;
 import com.se.demo.repository.ProjectRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,10 +33,10 @@ public class ProjectService {
         System.out.println("LEADER::"+projectDTO.getLeader_id());
         MemberEntity leaderEntity = memberRepository.findById(projectDTO.getLeader_id())
             .orElseThrow(() -> new IllegalArgumentException("Invalid leader ID"));
-        MemberDTO leaderDTO = toMemberDTO(leaderEntity);
+        MemberDTO leaderDTO = MemberDTO.toMemberDTO(leaderEntity);
         projectDTO.getMembers().add(leaderDTO);
 
-        ProjectEntity projectEntity = projectDTO.toEntity();
+        ProjectEntity projectEntity = ProjectEntity.toProjectEntity(projectDTO);
         return projectRepository.save(projectEntity);
     }
 
@@ -43,32 +45,44 @@ public class ProjectService {
         ProjectEntity projectEntity = projectRepository.findById(project_id)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid project ID"));
         //return toDTO(projectEntity);
-        return toProjectDTO(projectEntity);
+        return ProjectDTO.toProjectDTO(projectEntity);
     }
 
     @Transactional
     public List<ProjectDTO> findByUserId(int userId) {
         MemberEntity memberEntity = memberRepository.findById(userId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid member ID"));
-        return toProjectDTOList(memberEntity.getProjects());
+        return ProjectDTO.toProjectDTOList(memberEntity.getProjects());
     }
 
     public List<IssueDTO> findByProjectId(int projectId) {
         List<IssueEntity> issueEntityList = issueRepository.findByProjectId(projectId);
         List<IssueDTO> issueDTOList = issueEntityList.stream()
-                .map(IssueService::toIssueDTO)
+                .map(IssueDTO::toIssueDTO)
                 .collect(Collectors.toList());
         return issueDTOList;
     }
 
-    private MemberDTO toMemberDTO(MemberEntity memberEntity) {
+    @Transactional
+    public IssueEntity createIssue(IssueDTO issueDTO) {
+        //해당 프로젝트DTO의 issueList에 넣어주고
+
+        ProjectEntity projectEntity = projectRepository.findById(issueDTO.getProject_id())
+                .orElseThrow(() -> new IllegalArgumentException("Invalid project ID"));
+        ProjectDTO projectDTO = ProjectDTO.toProjectDTO(projectEntity);
+        projectDTO.getIssues().add(issueDTO);
+        //이슈 진짜 생성
+        return issueService.createIssue(issueDTO);
+    }
+
+    /*private MemberDTO toMemberDTO(MemberEntity memberEntity) {
         MemberDTO memberDTO = new MemberDTO();
         memberDTO.setUser_id(memberEntity.getUser_id());
         memberDTO.setNickname(memberEntity.getNickname());
         memberDTO.setPassword(memberEntity.getPassword());
         //memberDTO.setProjects(toProjectDTOList(memberEntity.getProjects())); 이거 있어야 나의 project의 member의 project 정보가 올바르게 나오는데, 이거 실행하면 스택오버플로우 발생해서.. 그리고 내 동료의 project들을 내가 굳이 알아야 할 필요는 없잖앙
         return memberDTO;
-    }
+    }*/
 
     //없어도 될듯
     /*public ProjectDTO toDTO(ProjectEntity projectEntity) {
@@ -84,7 +98,7 @@ public class ProjectService {
         );
         return projectDTO;
     }*/
-
+/*
     public IssueDTO toIssueDTO(IssueEntity issueEntity) {
         /*return new IssueDTO(
                 //issueEntity.getId()
@@ -92,17 +106,17 @@ public class ProjectService {
                 //issueEntity.getIssue_title(),
                 //issueEntity.getIssue_description()
 
-        );*/
-        return IssueService.toIssueDTO(issueEntity);
-    }
+        );
+        return IssueDTO.toIssueDTO(issueEntity);
+    }*/
 
-    @Transactional
+    /*@Transactional
     public ProjectDTO toProjectDTO(ProjectEntity projectEntity) {
         List<IssueEntity> issueEntities = projectEntity.getIssues();
         List<IssueDTO> issueDTOs = new ArrayList<>();
         if(issueEntities!=null){
             for(IssueEntity issueEntity : issueEntities) {
-                issueDTOs.add(toIssueDTO(issueEntity));
+                issueDTOs.add(IssueDTO.toIssueDTO(issueEntity));
             }
         }
 
@@ -131,16 +145,6 @@ public class ProjectService {
             projectDTOs.add(toProjectDTO(projectEntity1));
         }
         return projectDTOs;
-    }
+    }*/
 
-    @Transactional
-    public IssueEntity createIssue(IssueDTO issueDTO) {
-        //해당 프로젝트DTO의 issueList에 넣어주고
-        ProjectEntity projectEntity = projectRepository.findById(issueDTO.getProject_id())
-                .orElseThrow(() -> new IllegalArgumentException("Invalid project ID"));
-        ProjectDTO projectDTO = toProjectDTO(projectEntity);
-        projectDTO.getIssues().add(issueDTO);
-        //이슈 진짜 생성
-        return issueService.createIssue(issueDTO);
-    }
 }
