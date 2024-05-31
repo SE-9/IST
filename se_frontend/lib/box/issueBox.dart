@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:se_frontend/files/issueClass.dart';
-import 'package:se_frontend/widgets/detail_box.dart';
 import 'package:se_frontend/issue_detail.dart';
 
 class IssueBox extends StatelessWidget {
