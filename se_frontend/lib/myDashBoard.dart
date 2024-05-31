@@ -8,10 +8,10 @@ import 'package:se_frontend/box/projectBox.dart';
 import 'package:se_frontend/issue_list.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<Project>> fetchProjects(String userId) async {
+Future<List<Project>> fetchProjects(String user_id) async {
   try {
     final response = await http.get(
-      Uri.parse('http://localhost:8081/project/my/$userId'),
+      Uri.parse('http://localhost:8081/project/my/$user_id'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -22,7 +22,7 @@ Future<List<Project>> fetchProjects(String userId) async {
     if (response.statusCode == 200) {
       final List<dynamic> projectJson = json.decode(response.body);
       if (projectJson.isEmpty) {
-        print('No projects found in the database for user: $userId');
+        print('No projects found in the database for user: $user_id');
       }
       return projectJson.map((json) {
         try {

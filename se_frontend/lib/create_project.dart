@@ -17,6 +17,7 @@ class _CreateProjectState extends State<CreateProject> {
   final TextEditingController _leaderController =
       TextEditingController(); // 리더 입력 컨트롤러
   int? _leaderId; // 리더 id를 저장할 변수 (user_id임 결국엔)
+  String? _leaderNickname; //리더 닉네임으로 저장.. api 또 만들수 있으면 삭제..
   bool _isLoading = false; // 로딩 상태 변수
   String? _errorMessage; // 에러 메시지를 저장할 변수
 
@@ -35,6 +36,7 @@ class _CreateProjectState extends State<CreateProject> {
         setState(() {
           if (userId != null) {
             _leaderId = userId; // 성공하면 리더 id 에 user_id 저장 (int)
+            _leaderNickname = nickname; // 성공 시 리더 닉네임 저장
             _errorMessage = null; // 에러 메시지 초기화
           } else {
             _leaderId = null; // 실패하면 null로 저장
@@ -60,7 +62,10 @@ class _CreateProjectState extends State<CreateProject> {
   }
 
   // 프로젝트를 생성하는 비동기 함수
-  Future<void> _createProject(String title, int leaderId) async {
+  Future<void> _createProject(
+    String title,
+    int leaderId,
+  ) async {
     try {
       final response = await http.post(
         Uri.parse('http://localhost:8081/project/create'), // POST 요청 URL

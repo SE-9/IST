@@ -81,6 +81,14 @@ class ProjectPage extends StatelessWidget {
                 color: const Color.fromARGB(255, 37, 37, 37),
               ),
               alignment: Alignment.center,
+              child: Text(
+                "${project.leaderId}",
+                style: const TextStyle(
+                  fontSize: 25,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w900,
+                ),
+              ),
             ),
             // 이슈 생성란 이동 버튼
             const SizedBox(height: 50),
