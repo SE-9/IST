@@ -5,12 +5,15 @@ import 'package:se_frontend/issue_detail.dart';
 class IssueBox extends StatelessWidget {
   final Issue issue;
 
-  const IssueBox({super.key, required this.issue});
+  const IssueBox({
+    super.key,
+    required this.issue,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // 누르면 프로젝트 페이지로 이동하게 제스쳐
+      // 누르면 이슈 상세 페이지로 이동하게 제스처
       onTap: () {
         Navigator.push(
           context,

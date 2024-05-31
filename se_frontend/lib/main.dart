@@ -20,10 +20,4 @@ class MyHomePage extends StatelessWidget {
     );
   }
 }
-/*  라이브러리 파일, 폴더 설명해드리겠음
-
-
-
-
-
- */
+//히히히히히히히

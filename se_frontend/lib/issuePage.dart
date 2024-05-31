@@ -10,7 +10,6 @@ class IssuePage extends StatelessWidget {
   final String status;
 
   const IssuePage({
-    super.key,
     required this.title,
     required this.description,
     required this.assignee,
@@ -105,12 +104,11 @@ class IssuePage extends StatelessWidget {
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(
-                          builder: (context) => const IssueListPage()),
+                      MaterialPageRoute(builder: (context) => IssueListPage()),
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color.fromARGB(255, 255, 205, 220),
+                      backgroundColor: Color.fromARGB(255, 255, 205, 220),
                       fixedSize: const Size.fromHeight(50),
                       shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(20))),
