@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:se_frontend/files/issueClass.dart';
 import 'issue_input_field.dart';
 import 'widgets/issue_card.dart';
-import 'package:se_frontend/files/issueClass.dart'; // 필요한 파일 경로에 맞게 수정하세요
+import 'package:http/http.dart' as http;
+import 'dart:convert';
 
 class IssueListPage extends StatefulWidget {
   const IssueListPage({super.key});
@@ -21,49 +23,51 @@ class IssueListPageState extends State<IssueListPage> {
     _fetchIssues();
   }
 
-  void _fetchIssues() async {
-    // 여기서 백엔드에서 데이터를 가져오는 로직을 구현하세요.
-    // 예를 들어, API 요청을 통해 데이터를 받아올 수 있습니다.
-    // 받아온 데이터를 issues 리스트에 저장하고, 초기 필터링을 수행합니다.
-    setState(() {
-      issues = [
-        Issue(
-          id: 1,
-          title: 'Issue 1',
-          description: 'Description for Issue 1',
-          reporter: 1,
-          date: DateTime.now(),
-          priority: IPriority.MAJOR,
-          projectId: 101,
-          fixer: 2,
-          assignee: 3,
-          state: IState.NEW,
-        ),
-        Issue(
-          id: 2,
-          title: 'Issue 2',
-          description: 'Description for Issue 2',
-          reporter: 2,
-          date: DateTime.now(),
-          priority: IPriority.MINOR,
-          projectId: 102,
-          fixer: 3,
-          assignee: 4,
-          state: IState.RESOLVED,
-        ),
-        // 추가로 더 많은 이슈를 여기에 추가하세요.
-      ];
-      filteredIssues = issues;
-    });
+  Future<void> _fetchIssues() async {
+    final userId = 'your_user_id'; // 실제 사용자 ID로 변경하세요
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:8081/issue/my/$userId'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      // API 응답 상태 코드 출력
+      print('HTTP response status from issue list: ${response.statusCode}');
+
+      if (response.statusCode == 200) {
+        final List<dynamic> issueJson = json.decode(response.body);
+
+        // API 응답 내용 출력
+        print('HTTP response body: ${response.body}');
+
+        if (issueJson.isEmpty) {
+          print('No issues found for user ID: $userId');
+        } else {
+          print('Fetched issues: $issueJson');
+        }
+        setState(() {
+          issues = issueJson.map((json) => Issue.fromJson(json)).toList();
+          filteredIssues = issues;
+        });
+      } else {
+        throw Exception(
+            'Failed to load issues. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      print('Error fetching issues: $e');
+    }
   }
 
   void _filterIssues(String query) {
     final filtered = issues.where((issue) {
       final matchesTitle =
           issue.title.toLowerCase().contains(query.toLowerCase());
-      final matchesReporter = issue.reporter.toString().contains(query);
+      final matchesReporter =
+          issue.reporterNickname.toLowerCase().contains(query.toLowerCase());
       final matchesAssignee =
-          issue.assignee?.toString().contains(query) ?? false;
+          issue.assigneeNickname.toLowerCase().contains(query.toLowerCase());
       final matchesStatus = selectedStatus == 'All' ||
           issue.state.toString().split('.').last == selectedStatus;
       return (matchesTitle || matchesReporter || matchesAssignee) &&
@@ -107,10 +111,12 @@ class IssueListPageState extends State<IssueListPage> {
                   },
                   items: <String>[
                     'All',
-                    'OPEN',
-                    'IN_PROGRESS',
+                    'NEW',
+                    'ASSIGNED',
+                    'FIXED',
                     'RESOLVED',
-                    'CLOSED'
+                    'CLOSED',
+                    'REOPENED'
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -129,8 +135,10 @@ class IssueListPageState extends State<IssueListPage> {
                 return IssueCard(
                   title: issue.title,
                   status: issue.state.toString().split('.').last,
-                  reporter: issue.reporter.toString(),
-                  assignee: issue.assignee?.toString() ?? 'Unassigned',
+                  reporter: issue.reporterNickname,
+                  assignee: issue.assigneeNickname.isNotEmpty
+                      ? issue.assigneeNickname
+                      : 'Unassigned',
                 );
               },
             ),
