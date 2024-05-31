@@ -139,8 +139,8 @@ class MyDashboard extends StatelessWidget {
                               children: projects.map((project) {
                                 return const ProjectBox(
                                   title: '백에서 받아와야 함',
-                                  description: '//',
-                                  leader: '//',
+                                  description: '프로젝트 설명 받아와야 함',
+                                  leader: '리더 누군지 받아와야 함',
                                   // project: project,
                                 );
                               }).toList(),
