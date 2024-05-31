@@ -122,9 +122,7 @@ class ProjectPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const IssueInputField(
-                          isPL: true, // isPL 처리 필요.
-                        ),
+                        builder: (context) => const IssueInputField(),
                       ),
                     );
                   },

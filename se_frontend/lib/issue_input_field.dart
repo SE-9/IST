@@ -5,9 +5,9 @@ import 'package:se_frontend/files/issueClass.dart';
 import 'package:se_frontend/myDashBoard.dart';
 
 class IssueInputField extends StatefulWidget {
-  final bool isPL;
-
-  const IssueInputField({super.key, required this.isPL});
+  const IssueInputField({
+    super.key,
+  });
 
   @override
   IssueInputFieldState createState() => IssueInputFieldState();
@@ -30,8 +30,7 @@ class IssueInputFieldState extends State<IssueInputField> {
         'title': title,
         'description': description,
         'priority': priority,
-        'reporter_id': 23,
-        'pl_id': 123,
+        'reporter_id': 23, // 본인 user id, 수정 필요
         'project_id': 1,
       };
 

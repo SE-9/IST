@@ -154,7 +154,7 @@ class IssueListPageState extends State<IssueListPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const IssueInputField(isPL: true)),
+                    builder: (context) => const IssueInputField()),
               );
             },
             child: const Text('이슈 등록'),
