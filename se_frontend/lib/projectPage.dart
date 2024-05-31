@@ -26,7 +26,7 @@ class ProjectPage extends StatelessWidget {
         reporter: index + 1,
         date: DateTime.now(),
         priority: IPriority.MAJOR,
-        projectId: 101,
+        projectId: 1,
         fixer: index + 2,
         assignee: index + 3,
         state: IState.NEW,
