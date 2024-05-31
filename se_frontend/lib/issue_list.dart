@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:se_frontend/files/issueClass.dart';
 import 'issue_input_field.dart';
 import 'widgets/issue_card.dart';
 import 'issue_detail.dart';
-import 'package:se_frontend/files/issueClass.dart';
 
 class IssueListPage extends StatefulWidget {
   const IssueListPage({super.key});
