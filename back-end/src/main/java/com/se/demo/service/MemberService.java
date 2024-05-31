@@ -55,10 +55,10 @@ public class MemberService {
         if(userNickname == null) return null;
 
         //Optional<MemberEntity> optionalMemberEntityOfYW = MemberRepository.findByNickname(userNickname);
-        Optional<MemberEntity> optionalMemberEntityOfYW = memberRepository.findByNickname(userNickname);
-        if(optionalMemberEntityOfYW.isEmpty()) return null;
+        Optional<MemberEntity> optionalMemberEntity = memberRepository.findByNickname(userNickname);
+        if(optionalMemberEntity.isEmpty()) return null;
 
-        return optionalMemberEntityOfYW.get();
+        return optionalMemberEntity.get();
     }
 
     //loginNickname(String)을 입력받아 memberEntity를 return함
@@ -73,8 +73,25 @@ public class MemberService {
         return optionalMemberEntity.get();
     }
 
-    public boolean checkId(String id) {
-        return memberRepository.existsById(Integer.parseInt(id));
+    public boolean checkId(String nickname) {
+        try {
+            System.out.println(nickname);
+            if(memberRepository.existsByNickname(nickname)){
+                return false;
+            }
+            else{
+                return true;
+            }
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    //해당 nickname을 가진 user의 id를 반환
+    public int findByNickname(String nickname){
+        MemberEntity memberEntity = memberRepository.findByNickname(nickname)
+                .orElseThrow(() -> new IllegalArgumentException("Invalid user nickname"));
+        return memberEntity.getUser_id();
     }
 
 }
