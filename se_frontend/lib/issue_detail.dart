@@ -1,4 +1,3 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
@@ -133,99 +132,101 @@ class _IssueDetailState extends State<IssueDetail> {
       appBar: AppBar(
         title: Text(widget.issue.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            DetailBox(
-              item: 'Title:',
-              content: widget.issue.description,
-            ),
-            DetailBox(
-              item: 'Description',
-              content: widget.issue.description,
-            ),
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    const Text(
-                      'Status',
-                      style: TextStyle(
-                        fontSize: 25,
-                        fontWeight: FontWeight.bold,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DetailBox(
+                item: 'Title:',
+                content: widget.issue.description,
+              ),
+              DetailBox(
+                item: 'Description',
+                content: widget.issue.description,
+              ),
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      const Text(
+                        'Status',
+                        style: TextStyle(
+                          fontSize: 25,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
-                    ),
-                    const SizedBox(
-                      width: 15,
-                    ),
-                    DropdownButton<IState>(
-                      value: _selectedState,
-                      onChanged: (IState? newValue) {
-                        // new에서 assigned로 변경할 수 없도록 필터링
-                        if (widget.issue.state == IState.NEW &&
-                            newValue == IState.ASSIGNED) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                                content: Text(
-                                    'Cannot change status from new to assigned here.')),
+                      const SizedBox(
+                        width: 15,
+                      ),
+                      DropdownButton<IState>(
+                        value: _selectedState,
+                        onChanged: (IState? newValue) {
+                          // new에서 assigned로 변경할 수 없도록 필터링
+                          if (widget.issue.state == IState.NEW &&
+                              newValue == IState.ASSIGNED) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                  content: Text(
+                                      'Cannot change status from new to assigned here.')),
+                            );
+                            return;
+                          }
+                          setState(() {
+                            _selectedState = newValue!;
+                          });
+                        },
+                        items: IState.values
+                            .map<DropdownMenuItem<IState>>((IState value) {
+                          return DropdownMenuItem<IState>(
+                            value: value,
+                            child: Text(value.toString().split('.').last),
                           );
-                          return;
-                        }
-                        setState(() {
-                          _selectedState = newValue!;
-                        });
-                      },
-                      items: IState.values
-                          .map<DropdownMenuItem<IState>>((IState value) {
-                        return DropdownMenuItem<IState>(
-                          value: value,
-                          child: Text(value.toString().split('.').last),
-                        );
-                      }).toList(),
-                    ),
-                  ],
+                        }).toList(),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
+              ElevatedButton(
+                // 이슈 변경 버튼
+                onPressed: _updateState,
+                child: const Text('Update Status'),
+              ),
+              const SizedBox(height: 25),
+              DetailBox(
+                item: 'Priority',
+                content: widget.issue.priority.toString().split('.').last,
+              ),
+              DetailBox(
+                item: 'Reporter',
+                content: widget.issue.reporter.toString(),
+              ),
+              const Text(
+                'Assignee(Fixer)',
+                style: TextStyle(
+                  fontSize: 25,
+                  fontWeight: FontWeight.bold,
                 ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              // 이슈 변경 버튼
-              onPressed: _updateState,
-              child: const Text('Update Status'),
-            ),
-            const SizedBox(height: 25),
-            DetailBox(
-              item: 'Priority',
-              content: widget.issue.priority.toString().split('.').last,
-            ),
-            DetailBox(
-              item: 'Reporter',
-              content: widget.issue.reporter.toString(),
-            ),
-            const Text(
-              'Assignee(Fixer)',
-              style: TextStyle(
-                fontSize: 25,
-                fontWeight: FontWeight.bold,
               ),
-            ),
-            TextField(
-              controller: _assigneeController,
-              decoration: const InputDecoration(
-                border: OutlineInputBorder(),
+              TextField(
+                controller: _assigneeController,
+                decoration: const InputDecoration(
+                  border: OutlineInputBorder(),
+                ),
               ),
-            ),
-            const SizedBox(height: 10),
-            ElevatedButton(
-              // 배정 버튼
-              onPressed: _assignUser,
-              child: const Text('Assign User'),
-            ),
-            // Add more DetailBox widgets as needed
-          ],
+              const SizedBox(height: 10),
+              ElevatedButton(
+                // 배정 버튼
+                onPressed: _assignUser,
+                child: const Text('Assign User'),
+              ),
+              // Add more DetailBox widgets as needed
+            ],
+          ),
         ),
       ),
     );
