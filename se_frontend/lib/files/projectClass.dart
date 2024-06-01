@@ -18,18 +18,18 @@ class Project {
   });
 
   factory Project.fromJson(Map<String, dynamic> json) {
-    final projectDTO = json['projectDTO'] as Map<String, dynamic>;
+    final projectDTO = json['projectDTO'] as Map<String, dynamic>? ?? {};
     return Project(
       id: projectDTO['id'] ?? 0,
       title: projectDTO['title'] ?? '',
       leaderId: projectDTO['leader_id'] ?? 0,
       leaderNickname: json['leader_nickname'] ?? '',
       issues: (projectDTO['issues'] as List<dynamic>?)
-              ?.map((i) => Issue.fromJson(i))
+              ?.map((i) => Issue.fromJson(i as Map<String, dynamic>))
               .toList() ??
           [],
       members: (projectDTO['members'] as List<dynamic>?)
-              ?.map((m) => Member.fromJson(m))
+              ?.map((m) => Member.fromJson(m as Map<String, dynamic>))
               .toList() ??
           [],
     );
@@ -66,7 +66,7 @@ class Member {
       nickname: json['nickname'] ?? '',
       password: json['password'] ?? '',
       projects: (json['projects'] as List<dynamic>?)
-              ?.map((p) => Project.fromJson(p))
+              ?.map((p) => Project.fromJson(p as Map<String, dynamic>))
               .toList() ??
           [],
     );

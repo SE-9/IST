@@ -8,11 +8,13 @@ import 'package:se_frontend/box/projectBox.dart';
 import 'package:se_frontend/issue_list.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<Project>> fetchProjects(int userId) async {
-  //주어진 유저 아이디로 프로젝트 가져오기
+import 'dart:convert';
+import 'package:http/http.dart' as http;
+import 'package:se_frontend/files/issueClass.dart';
+import 'package:se_frontend/files/projectClass.dart';
 
+Future<List<Project>> fetchProjects(int userId) async {
   try {
-    //예외처리
     final response = await http.get(
       Uri.parse('http://localhost:8081/project/my/$userId'),
       headers: <String, String>{
@@ -24,17 +26,20 @@ Future<List<Project>> fetchProjects(int userId) async {
     print('HTTP response body: ${response.body}');
 
     if (response.statusCode == 200) {
-      final List<dynamic> projectJson = json.decode(response.body);
+      final List<dynamic> projectJson =
+          json.decode(response.body) as List<dynamic>;
+      print('Decoded JSON length: ${projectJson.length}'); // 리스트 길이 출력
       if (projectJson.isEmpty) {
         print('No projects found in the database for user: $userId');
       }
+
       return projectJson.map((json) {
-        //프로젝트 JSON을 프로젝트로 변환
         try {
-          print('Project JSON: $json'); // 디버깅 메시지
-          return Project.fromJson(json);
+          print('Project JSON: $json\n');
+          return Project.fromJson(json as Map<String, dynamic>);
         } catch (e) {
-          print('Error parsing project JSON: $e');
+          print('Error parsing project JSON: $e\n');
+          print('Invalid Project JSON: $json\n'); // 잘못된 JSON 데이터 출력
           throw Exception('Error parsing project JSON: $e');
         }
       }).toList();
@@ -46,19 +51,15 @@ Future<List<Project>> fetchProjects(int userId) async {
   }
 }
 
-// 이슈 fetch
+// 백엔드에서 이슈 리스트를 받아오는 함수
 Future<List<Issue>> fetchIssues(int userId) async {
-  final response = await http.get(
-    Uri.parse('http://localhost:8081/issue/my/$userId'),
-    headers: <String, String>{
-      'Content-Type': 'application/json; charset=UTF-8',
-    },
-  );
+  final response =
+      await http.get(Uri.parse('http://localhost:8081/issue/my/$userId'));
 
   if (response.statusCode == 200) {
-    final List<dynamic> issueJson =
-        json.decode(response.body); // JSON 데이터를 Issue 객체로 변환하여 리스트로 반환
-    return issueJson.map((json) => Issue.fromJson(json)).toList();
+    // JSON 응답을 파싱하여 이슈 리스트로 변환
+    List<dynamic> jsonResponse = json.decode(response.body);
+    return jsonResponse.map((issueJson) => Issue.fromJson(issueJson)).toList();
   } else {
     throw Exception('Failed to load issues');
   }
