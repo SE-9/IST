@@ -1,11 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+import 'package:se_frontend/myDashBoard.dart';
 
 class AddMember extends StatefulWidget {
   final int projectId;
+  final int userId;
 
-  const AddMember({Key? key, required this.projectId}) : super(key: key);
+  const AddMember({
+    Key? key,
+    required this.projectId,
+    required this.userId,
+  }) : super(key: key);
 
   @override
   _AddMemberState createState() => _AddMemberState();
@@ -34,20 +39,26 @@ class _AddMemberState extends State<AddMember> {
       );
 
       if (response.statusCode == 200) {
-        final int? userId = int.tryParse(response.body);
+        final int? memberId =
+            int.tryParse(response.body); //받아온 먐버정보 memberId라고 지칭
 
-        if (userId != null) {
+        if (memberId != null) {
           // 프로젝트에 멤버를 추가하는 API 호출
           final addMemberResponse = await http.post(
             Uri.parse(
-                'http://localhost:8081/project/${widget.projectId}/invite/$userId'),
+                'http://localhost:8081/project/${widget.projectId}/invite/$memberId'),
             headers: <String, String>{
               'Content-Type': 'application/json; charset=UTF-8',
             },
           );
-
           if (addMemberResponse.statusCode == 200) {
-            Navigator.pop(context, true); // 성공적으로 추가되면 이전 화면으로 이동하며 true 반환
+            Navigator.pushAndRemoveUntil(
+              context,
+              MaterialPageRoute(
+                builder: (context) => MyDashboard(userId: widget.userId),
+              ),
+              (Route<dynamic> route) => false,
+            ); // 성공적으로 추가되면 대시보드로 이동
           } else {
             setState(() {
               _errorMessage =

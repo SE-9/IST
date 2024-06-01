@@ -154,7 +154,8 @@ class _ProjectPageState extends State<ProjectPage> {
                 final result = await Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => AddMember(projectId: _project.id),
+                    builder: (context) => AddMember(
+                        projectId: _project.id, userId: widget.userId),
                   ),
                 );
                 if (result == true) {
@@ -177,8 +178,9 @@ class _ProjectPageState extends State<ProjectPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => IssueInputField(
-                          projectId: _project.id, //플젝 아이디 전달
-                          userId: widget.userId, //유저 닉네임 전달
+                          projectId: _project.id,
+                          userId: widget.userId //플젝 아이디 전달
+                          , //유저 닉네임 전달
                         ),
                       ),
                     );
@@ -232,9 +234,8 @@ class _ProjectPageState extends State<ProjectPage> {
                       child: Row(
                         children: issues.map((issue) {
                           return IssueBox(
-                            issue: issue,
-                            userId: widget
-                                .userId, //류: 여기 수정해야되는데 닉네임 부분 뺴기 너무 벅차서 일단 닉네임이라고 해둠
+                            issue: issue, userId: widget.userId,
+                            //류: 여기 수정해야되는데 닉네임 부분 뺴기 너무 벅차서 일단 닉네임이라고 해둠
                           ); //이슈 박스로 리턴
                         }).toList(),
                       ),

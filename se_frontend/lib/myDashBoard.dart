@@ -64,9 +64,30 @@ Future<List<Issue>> fetchIssues(int userId) async {
   }
 }
 
-class MyDashboard extends StatelessWidget {
+class MyDashboard extends StatefulWidget {
   final int userId;
   const MyDashboard({super.key, required this.userId});
+
+  @override
+  _MyDashboardState createState() => _MyDashboardState();
+}
+
+class _MyDashboardState extends State<MyDashboard> {
+  late Future<List<Project>> _projectsFuture;
+  late Future<List<Issue>> _issuesFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchData();
+  }
+
+  void _fetchData() {
+    setState(() {
+      _projectsFuture = fetchProjects(widget.userId);
+      _issuesFuture = fetchIssues(widget.userId);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -100,7 +121,7 @@ class MyDashboard extends StatelessWidget {
                         context,
                         MaterialPageRoute(
                             builder: (context) =>
-                                IssueListPage(userId: userId //
+                                IssueListPage(userId: widget.userId //
                                     )), // userId
                       );
                     },
@@ -125,14 +146,14 @@ class MyDashboard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  if (userId == 1)
+                  if (widget.userId == 1)
                     ElevatedButton(
                       onPressed: () async {
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) =>
-                                  CreateProject(userId: userId),
+                                  CreateProject(userId: widget.userId),
                             ));
                       },
                       child: const Text('Create Project'),
@@ -152,7 +173,7 @@ class MyDashboard extends StatelessWidget {
                     height: 230,
                     width: double.infinity,
                     child: FutureBuilder<List<Project>>(
-                      future: fetchProjects(userId),
+                      future: _projectsFuture,
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -177,7 +198,7 @@ class MyDashboard extends StatelessWidget {
                                 print(
                                     'Project title: ${project.title}'); // 디버깅 메시지
                                 return ProjectBox(
-                                    project: project, userId: userId);
+                                    project: project, userId: widget.userId);
                               }).toList(),
                             ),
                           ),
@@ -202,7 +223,7 @@ class MyDashboard extends StatelessWidget {
                     height: 230,
                     width: double.infinity,
                     child: FutureBuilder<List<Issue>>(
-                      future: fetchIssues(userId),
+                      future: fetchIssues(widget.userId),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
@@ -224,7 +245,7 @@ class MyDashboard extends StatelessWidget {
                               children: issues.map((issue) {
                                 return IssueBox(
                                   issue: issue,
-                                  userId: userId,
+                                  userId: widget.userId,
                                 ); //류: 여기도 닉네임 나중에 뺴야함, 소 : userId로 이름 변경
                               }).toList(),
                             ),
