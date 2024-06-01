@@ -1,19 +1,17 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:se_frontend/files/issueClass.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:se_frontend/myDashBoard.dart';
-import 'package:se_frontend/issue_detail.dart';
 
 class IssueInputField extends StatefulWidget {
   final int projectId;
-  final int reporterNickname; // 수정이한테 받아야 함.
+  final int userId; // 수정이한테 받아야 함.
 
   const IssueInputField({
     super.key,
     required this.projectId,
-    required this.reporterNickname,
+    required this.userId,
   });
 
   @override
@@ -37,8 +35,9 @@ class _IssueInputFieldState extends State<IssueInputField> {
       final issueData = {
         'title': title,
         'description': description,
+        'reporter_id':
+            widget.userId, // 류: 리포터 아이디도 잘받게 수정해써용 // 이제 id로 넘겼으니까 수정 필요
         'priority': priority,
-        'reporter_id': widget.reporterNickname, // 류: 리포터 아이디도 잘받게 수정해써용
         'project_id': widget.projectId, // 류: 여기 프로젝트 아이디 잘받게 수정
       };
 
@@ -60,9 +59,9 @@ class _IssueInputFieldState extends State<IssueInputField> {
                 Navigator.pushReplacement(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => MyDashboard(
-                            userId: widget.reporterNickname, //류 : 닉네임 전달
-                          )),
+                      builder: (context) =>
+                          MyDashboard(userId: widget.userId //류 : 닉네임 전달
+                              )),
                 );
               },
             ),
@@ -96,6 +95,14 @@ class _IssueInputFieldState extends State<IssueInputField> {
           key: _formKey,
           child: Column(
             children: [
+              const Text(
+                //류: 제목 생성란 사라진거같아서 추가했어요
+                'titile',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
               TextFormField(
                 controller: _titleController,
                 decoration: InputDecoration(

@@ -139,6 +139,10 @@ class _IssueDetailState extends State<IssueDetail> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             DetailBox(
+              item: 'Title:',
+              content: widget.issue.description,
+            ),
+            DetailBox(
               item: 'Description',
               content: widget.issue.description,
             ),

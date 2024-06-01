@@ -125,7 +125,7 @@ class MyDashboard extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  if (userId == '1')
+                  if (userId == 1)
                     ElevatedButton(
                       onPressed: () async {
                         Navigator.push(

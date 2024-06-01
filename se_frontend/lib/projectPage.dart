@@ -14,7 +14,7 @@ class ProjectPage extends StatefulWidget {
 
   const ProjectPage({
     super.key,
-    required this.project, //플젝 정보 전ㄴ달받음
+    required this.project, //플젝 정보 전달받음
     required this.userId,
   });
 
@@ -159,6 +159,7 @@ class _ProjectPageState extends State<ProjectPage> {
                 );
                 if (result == true) {
                   _fetchProject(); // 돌아온 후 프로젝트 데이터 새로 고침
+                  Navigator.pop(context, true); // 변경된 내용 전달
                 }
               },
               child: const Text('Add Member'),
