@@ -5,19 +5,60 @@ import 'package:se_frontend/files/projectClass.dart';
 import 'package:se_frontend/issue_input_field.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:se_frontend/add_member.dart';
 
 // 개별 프로젝트 페이지
-class ProjectPage extends StatelessWidget {
-  final Project project;
+class ProjectPage extends StatefulWidget {
+  final Project project; //현재 프로젝트 전달용
+  final String userId; // 유저 아이디 전달용
 
   const ProjectPage({
-    super.key,
-    required this.project,
-  });
+    Key? key,
+    required this.project, //플젝 정보 전ㄴ달받음
+    required this.userId,
+  }) : super(key: key);
 
+  @override
+  _ProjectPageState createState() => _ProjectPageState();
+}
+
+class _ProjectPageState extends State<ProjectPage> {
+  late Project _project; //플젝 정보저장 함수
+
+  @override
+  void initState() {
+    //여기서 fetchProject 호출해서 백에서 정보 가져옴
+    super.initState();
+    _project = widget.project; //위젯에서 전달받은 플젝 정보 초기화
+    _fetchProject(); //서버에서 플젝 정보 가져오기
+  }
+
+  Future<void> _fetchProject() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:8081/project/${_project.id}'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _project = Project.fromJson(
+              json.decode(response.body)); // JSON 데이터 -> 프로젝트 객체로 변환
+        });
+      } else {
+        throw Exception('Failed to load project');
+      }
+    } catch (e) {
+      print('Error fetching project: $e');
+    }
+  }
+
+//서버에서 이슈 목록 가져오기
   Future<List<Issue>> fetchIssues() async {
     final response = await http.get(
-      Uri.parse('http://localhost:8081/project/$project'),
+      Uri.parse('http://localhost:8081/project/${_project.id}/issues'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -34,6 +75,7 @@ class ProjectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; // 넓이
+    ScrollController _scrollController = ScrollController();
 
     // 화면 크기에 따라 폰트 크기와 패딩을 동적으로 설정
     double fontSize = screenWidth < 850 ? 18 : 18;
@@ -60,7 +102,7 @@ class ProjectPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              project.title,
+              _project.title,
               style: const TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w900,
@@ -82,13 +124,45 @@ class ProjectPage extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                "${project.leaderId}",
+                "${_project.leaderNickname}",
                 style: const TextStyle(
                   fontSize: 25,
                   color: Colors.white,
                   fontWeight: FontWeight.w900,
                 ),
               ),
+            ),
+            // 멤버들 리스트
+            const SizedBox(height: 20),
+            const Text(
+              "Members",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _project.members.map((member) {
+                return Text(
+                  member.nickname,
+                  style: const TextStyle(fontSize: 18),
+                );
+              }).toList(),
+            ),
+            // 멤버 추가 버튼
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddMember(projectId: _project.id),
+                  ),
+                );
+                if (result == true) {
+                  _fetchProject(); // 돌아온 후 프로젝트 데이터 새로 고침
+                }
+              },
+              child: const Text('Add Member'),
             ),
             // 이슈 생성란 이동 버튼
             const SizedBox(height: 50),
@@ -102,8 +176,9 @@ class ProjectPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const IssueInputField(
-                          isPL: true, // isPL 처리 필요
+                        builder: (context) => IssueInputField(
+                          projectId: _project.id, //플젝 아이디 전달
+                          reporterNickname: widget.userId, //유저 닉네임 전달
                         ),
                       ),
                     );
@@ -130,7 +205,6 @@ class ProjectPage extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 10),
-
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.0),
@@ -139,7 +213,7 @@ class ProjectPage extends StatelessWidget {
               height: 230,
               width: double.infinity,
               child: FutureBuilder<List<Issue>>(
-                future: fetchIssues(),
+                future: fetchIssues(), //이슈 목록 가져옴
                 builder: (context, snapshot) {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return const Center(child: CircularProgressIndicator());
@@ -151,11 +225,13 @@ class ProjectPage extends StatelessWidget {
 
                   final issues = snapshot.data!;
                   return Scrollbar(
+                    controller: _scrollController,
                     child: SingleChildScrollView(
+                      controller: _scrollController,
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: issues.map((issue) {
-                          return IssueBox(issue: issue);
+                          return IssueBox(issue: issue); //이슈 박스로 리턴
                         }).toList(),
                       ),
                     ),

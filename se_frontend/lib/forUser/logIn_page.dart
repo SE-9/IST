@@ -6,23 +6,26 @@ import 'package:se_frontend/myDashBoard.dart';
 
 class LoginPage extends StatelessWidget {
   LoginPage({super.key});
-  final TextEditingController _userNameController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _userNameController =
+      TextEditingController(); //사용자 닉네임 입력 컨트롤러
+  final TextEditingController _passwordController =
+      TextEditingController(); //사용자 비번 입력 컨트롤러
 
   void loginUser(BuildContext context) async {
-    String nickname = _userNameController.text;
-    String password = _passwordController.text;
+    String nickname = _userNameController.text; //nickname 에 입력된 닉네임 가져옴
+    String password = _passwordController.text; //password 변수에 입력된 비번 가져옴
 
     // 로그인 요청을 보낼 URL
     Uri url = Uri.parse('http://localhost:8081/user/login');
 
-    // 요청 본문에 포함될 데이터
+    // 요청 본문 (MAP)
     Map<String, dynamic> requestBody = {
-      "nickname": nickname,
-      "password": password,
+      "nickname": nickname, //입력된 닉네임 전달
+      "password": password, //입력된 비번 전달
     };
 
     try {
+      //예외처리문
       final response = await http.post(
         url,
         body: jsonEncode(requestBody),
@@ -30,17 +33,20 @@ class LoginPage extends StatelessWidget {
       );
 
       if (response.statusCode == 200) {
-        final responseBody = jsonDecode(response.body);
+        //성공하면
+        final responseBody = jsonDecode(response.body); //응답 온거 JSON 으로 디코딩
 
-        // 응답 본문에서 nickname을 추출
         if (responseBody != null && responseBody['user_id'] != null) {
-          String userId = responseBody['user_id'];
+          // 응답이 null 이 아니고, user id 존재하면
+          String userId =
+              responseBody['user_id']; // user_id 추출 (백에서 확인된 유저 닉네임저장한곳)
 
-          // 로그인 성공 시 대시보드로 이동하며 닉네임 전달
+          // 로그인 성공 시
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MyDashboard(userId: userId),
+              builder: (context) =>
+                  MyDashboard(userId: userId), //대시보드 이동할때 유저 닉네임 전달
             ),
           );
         } else {
@@ -50,7 +56,8 @@ class LoginPage extends StatelessWidget {
         }
       } else {
         // 로그인 실패
-        print('Error: ${response.statusCode} ${response.reasonPhrase}');
+        print(
+            'Error: ${response.statusCode} ${response.reasonPhrase}'); //오류 상태코드, 이유를 콘솔에 출력시킴
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(content: Text('로그인에 실패했습니다.')),
         );
@@ -64,6 +71,7 @@ class LoginPage extends StatelessWidget {
     }
   }
 
+//****************************************** UI 부분 ****************************************************** */
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; // 넓이

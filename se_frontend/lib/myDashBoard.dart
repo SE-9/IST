@@ -8,23 +8,26 @@ import 'package:se_frontend/box/projectBox.dart';
 import 'package:se_frontend/issue_list.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<Project>> fetchProjects(String user_id) async {
+Future<List<Project>> fetchProjects(String userId) async {
+  //주어진 유저 아이디로 프로젝트 가져오기
   try {
+    //예외처리
     final response = await http.get(
-      Uri.parse('http://localhost:8081/project/my/$user_id'),
+      Uri.parse('http://localhost:8081/project/my/$userId'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
-    print('HTTP response status: ${response.statusCode}');
-    print('HTTP response body: ${response.body}');
+    //print('HTTP response status: ${response.statusCode}');
+    //print('HTTP response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final List<dynamic> projectJson = json.decode(response.body);
       if (projectJson.isEmpty) {
-        print('No projects found in the database for user: $user_id');
+        print('No projects found in the database for user: $userId');
       }
       return projectJson.map((json) {
+        //프로젝트 JSON을 프로젝트로 변환
         try {
           print('Project JSON: $json'); // 디버깅 메시지
           return Project.fromJson(json);
@@ -42,9 +45,9 @@ Future<List<Project>> fetchProjects(String user_id) async {
 }
 
 // 이슈 fetch
-Future<List<Issue>> fetchIssues(String user_id) async {
+Future<List<Issue>> fetchIssues(String userId) async {
   final response = await http.get(
-    Uri.parse('http://localhost:8081/issue/my/$user_id'),
+    Uri.parse('http://localhost:8081/issue/my/$userId'),
     headers: <String, String>{
       'Content-Type': 'application/json; charset=UTF-8',
     },
