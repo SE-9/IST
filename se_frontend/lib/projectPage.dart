@@ -9,23 +9,20 @@ import 'package:se_frontend/add_member.dart';
 
 // 개별 프로젝트 페이지
 class ProjectPage extends StatefulWidget {
-
   final Project project; //현재 프로젝트 전달용
   final String userId; // 유저 아이디 전달용
 
   const ProjectPage({
-    Key? key,
+    super.key,
     required this.project, //플젝 정보 전ㄴ달받음
     required this.userId,
-  }) : super(key: key);
-
+  });
 
   @override
   _ProjectPageState createState() => _ProjectPageState();
 }
 
 class _ProjectPageState extends State<ProjectPage> {
-
   late Project _project; //플젝 정보저장 함수
 
   @override
@@ -34,7 +31,6 @@ class _ProjectPageState extends State<ProjectPage> {
     super.initState();
     _project = widget.project; //위젯에서 전달받은 플젝 정보 초기화
     _fetchProject(); //서버에서 플젝 정보 가져오기
-
   }
 
   Future<void> _fetchProject() async {
@@ -48,9 +44,7 @@ class _ProjectPageState extends State<ProjectPage> {
 
       if (response.statusCode == 200) {
         setState(() {
-
           _project = Project.fromJson(json.decode(response.body));
-
         });
       } else {
         throw Exception('Failed to load project');
@@ -60,11 +54,9 @@ class _ProjectPageState extends State<ProjectPage> {
     }
   }
 
-
   Future<List<Issue>> fetchIssues() async {
     final response = await http.get(
       Uri.parse('http://localhost:8081/project/${_project.id}/issues'),
-
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -82,8 +74,7 @@ class _ProjectPageState extends State<ProjectPage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; // 넓이
 
-    ScrollController _scrollController = ScrollController();
-
+    ScrollController scrollController = ScrollController();
 
     // 화면 크기에 따라 폰트 크기와 패딩을 동적으로 설정
     double fontSize = screenWidth < 850 ? 18 : 18;
@@ -132,9 +123,7 @@ class _ProjectPageState extends State<ProjectPage> {
               ),
               alignment: Alignment.center,
               child: Text(
-
                 _project.leaderNickname,
-
                 style: const TextStyle(
                   fontSize: 25,
                   color: Colors.white,
@@ -187,10 +176,8 @@ class _ProjectPageState extends State<ProjectPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => IssueInputField(
-
                           projectId: _project.id, //플젝 아이디 전달
                           reporterNickname: widget.userId, //유저 닉네임 전달
-
                         ),
                       ),
                     );
@@ -237,15 +224,16 @@ class _ProjectPageState extends State<ProjectPage> {
 
                   final issues = snapshot.data!;
                   return Scrollbar(
-
-                    controller: _scrollController,
+                    controller: scrollController,
                     child: SingleChildScrollView(
-                      controller: _scrollController,
-
+                      controller: scrollController,
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: issues.map((issue) {
-                          return IssueBox(issue: issue); //이슈 박스로 리턴
+                          return IssueBox(
+                            issue: issue,
+                            userNickname: widget.userId,
+                          ); //이슈 박스로 리턴
                         }).toList(),
                       ),
                     ),

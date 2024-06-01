@@ -1,6 +1,9 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'dart:convert';
+
 import 'package:se_frontend/files/issueClass.dart';
 import 'package:se_frontend/widgets/detail_box.dart';
 
@@ -8,8 +11,13 @@ import 'package:se_frontend/widgets/detail_box.dart';
 
 class IssueDetail extends StatefulWidget {
   final Issue issue;
+  final String userNickname;
 
-  const IssueDetail({super.key, required this.issue});
+  const IssueDetail({
+    super.key,
+    required this.issue,
+    required this.userNickname,
+  });
 
   @override
   State<IssueDetail> createState() => _IssueDetailState();
@@ -36,7 +44,7 @@ class _IssueDetailState extends State<IssueDetail> {
 // 나머지 상태 변경 전송
   Future<void> _updateState() async {
     final url =
-        'http://localhost:8081/issue/${widget.issue.id}/update/{user_id}'; // API URL 설정, 로그인한 user의 id를 넘겨줘야 함. 수정 필요
+        'http://localhost:8081/issue/${widget.issue.id}/update/${widget.userNickname}'; //  로그인한 user의 닉네임 넘겨줌.
     final headers = {"Content-Type": "application/json"};
     final oldState =
         widget.issue.state.toString().split('.').last.toLowerCase();
@@ -81,7 +89,7 @@ class _IssueDetailState extends State<IssueDetail> {
     }
 
     final url =
-        'http://localhost:8081/issue/${widget.issue.id}/update/{user_id}'; // API URL 설정, 로그인한 user의 id를 넘겨줘야 함. 수정 필요
+        'http://localhost:8081/issue/${widget.issue.id}/update/${widget.userNickname}';
     final headers = {"Content-Type": "application/json"};
     const oldState = 'new';
     const newState = 'assigned';

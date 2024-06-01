@@ -4,10 +4,12 @@ import 'package:se_frontend/issue_detail.dart';
 
 class IssueBox extends StatelessWidget {
   final Issue issue;
+  final String userNickname;
 
   const IssueBox({
     super.key,
     required this.issue,
+    required this.userNickname,
   });
 
   @override
@@ -18,7 +20,10 @@ class IssueBox extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => IssueDetail(issue: issue),
+            builder: (context) => IssueDetail(
+              issue: issue,
+              userNickname: userNickname,
+            ),
           ),
         );
       },

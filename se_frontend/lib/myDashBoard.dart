@@ -9,7 +9,6 @@ import 'package:se_frontend/issue_list.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<Project>> fetchProjects(String userId) async {
-
   //주어진 유저 아이디로 프로젝트 가져오기
 
   try {
@@ -23,7 +22,6 @@ Future<List<Project>> fetchProjects(String userId) async {
 
     print('HTTP response status: ${response.statusCode}');
     print('HTTP response body: ${response.body}');
-
 
     if (response.statusCode == 200) {
       final List<dynamic> projectJson = json.decode(response.body);
@@ -223,7 +221,8 @@ class MyDashboard extends StatelessWidget {
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: issues.map((issue) {
-                                return IssueBox(issue: issue);
+                                return IssueBox(
+                                    issue: issue, userNickname: userId);
                               }).toList(),
                             ),
                           ),
