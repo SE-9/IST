@@ -45,7 +45,7 @@ class ProjectBox extends StatelessWidget {
             const SizedBox(height: 10),
             ...project.members.map((member) {
               return Text('Member: ${member.nickname}');
-            }),
+            }).toList(),
           ],
         ),
       ),
