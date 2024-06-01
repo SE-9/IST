@@ -8,7 +8,7 @@ import 'package:se_frontend/box/projectBox.dart';
 import 'package:se_frontend/issue_list.dart';
 import 'package:http/http.dart' as http;
 
-Future<List<Project>> fetchProjects(String userId) async {
+Future<List<Project>> fetchProjects(int userId) async {
   //주어진 유저 아이디로 프로젝트 가져오기
 
   try {
@@ -47,7 +47,7 @@ Future<List<Project>> fetchProjects(String userId) async {
 }
 
 // 이슈 fetch
-Future<List<Issue>> fetchIssues(String userId) async {
+Future<List<Issue>> fetchIssues(int userId) async {
   final response = await http.get(
     Uri.parse('http://localhost:8081/issue/my/$userId'),
     headers: <String, String>{
@@ -65,7 +65,7 @@ Future<List<Issue>> fetchIssues(String userId) async {
 }
 
 class MyDashboard extends StatelessWidget {
-  final String userId;
+  final int userId;
   const MyDashboard({super.key, required this.userId});
 
   @override
@@ -99,8 +99,9 @@ class MyDashboard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => IssueListPage(
-                                userNickname: userId)), // userNickname임
+                            builder: (context) => const IssueListPage(
+                                userNickname: '닉네임' //류: 여기도 닉네임 아직 못뺌
+                                )), // userNickname임
                       );
                     },
                     child: const Row(
@@ -222,7 +223,9 @@ class MyDashboard extends StatelessWidget {
                             child: Row(
                               children: issues.map((issue) {
                                 return IssueBox(
-                                    issue: issue, userNickname: userId);
+                                    issue: issue,
+                                    userNickname: '닉네임',
+                                    userid: userId); //류: 여기도 닉네임 나중에 뺴야함
                               }).toList(),
                             ),
                           ),

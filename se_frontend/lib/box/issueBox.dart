@@ -10,6 +10,7 @@ class IssueBox extends StatelessWidget {
     super.key,
     required this.issue,
     required this.userNickname,
+    required int userid,
   });
 
   @override

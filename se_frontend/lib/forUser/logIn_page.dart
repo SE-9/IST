@@ -38,8 +38,8 @@ class LoginPage extends StatelessWidget {
 
         if (responseBody != null && responseBody['user_id'] != null) {
           // 응답이 null 이 아니고, user id 존재하면
-          String userId =
-              responseBody['user_id']; // user_id 추출 (백에서 확인된 유저 닉네임저장한곳)
+          int userId = int.parse(
+              responseBody['user_id']); // user_id 추출 (백에서 확인된 유저 닉네임저장한곳)
 
           // 로그인 성공 시
           Navigator.pushReplacement(

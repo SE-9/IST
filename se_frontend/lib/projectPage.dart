@@ -10,7 +10,7 @@ import 'package:se_frontend/add_member.dart';
 // 개별 프로젝트 페이지
 class ProjectPage extends StatefulWidget {
   final Project project; //현재 프로젝트 전달용
-  final String userId; // 유저 아이디 전달용
+  final int userId; // 유저 아이디 전달용
 
   const ProjectPage({
     super.key,
@@ -232,7 +232,9 @@ class _ProjectPageState extends State<ProjectPage> {
                         children: issues.map((issue) {
                           return IssueBox(
                             issue: issue,
-                            userNickname: widget.userId,
+                            userNickname: '닉네임',
+                            userid: widget
+                                .userId, //류: 여기 수정해야되는데 닉네임 부분 뺴기 너무 벅차서 일단 닉네임이라고 해둠
                           ); //이슈 박스로 리턴
                         }).toList(),
                       ),

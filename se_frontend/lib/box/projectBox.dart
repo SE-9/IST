@@ -4,7 +4,7 @@ import 'package:se_frontend/files/projectClass.dart';
 
 class ProjectBox extends StatelessWidget {
   final Project project;
-  final String userId; //유저 아이디 플젝 페이지에 전달
+  final int userId; //유저 아이디 플젝 페이지에 전달
 
   const ProjectBox({
     super.key,

@@ -8,7 +8,7 @@ import 'package:se_frontend/issue_detail.dart';
 
 class IssueInputField extends StatefulWidget {
   final int projectId;
-  final String reporterNickname; // 수정이한테 받아야 함.
+  final int reporterNickname; // 수정이한테 받아야 함.
 
   const IssueInputField({
     super.key,
