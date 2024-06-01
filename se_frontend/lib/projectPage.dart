@@ -58,7 +58,9 @@ class _ProjectPageState extends State<ProjectPage> {
 //서버에서 이슈 목록 가져오기
   Future<List<Issue>> fetchIssues() async {
     final response = await http.get(
+
       Uri.parse('http://localhost:8081/project/${_project.id}/issues'),
+
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -75,7 +77,9 @@ class _ProjectPageState extends State<ProjectPage> {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; // 넓이
+
     ScrollController _scrollController = ScrollController();
+
 
     // 화면 크기에 따라 폰트 크기와 패딩을 동적으로 설정
     double fontSize = screenWidth < 850 ? 18 : 18;
@@ -177,8 +181,10 @@ class _ProjectPageState extends State<ProjectPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => IssueInputField(
+
                           projectId: _project.id, //플젝 아이디 전달
                           reporterNickname: widget.userId, //유저 닉네임 전달
+
                         ),
                       ),
                     );
@@ -225,9 +231,11 @@ class _ProjectPageState extends State<ProjectPage> {
 
                   final issues = snapshot.data!;
                   return Scrollbar(
+
                     controller: _scrollController,
                     child: SingleChildScrollView(
                       controller: _scrollController,
+
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: issues.map((issue) {

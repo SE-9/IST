@@ -13,6 +13,8 @@ class Issue {
   int? fixer;
   int? assignee;
   IState state;
+  String reporterNickname;
+  String assigneeNickname;
 
   Issue({
     required this.id,
@@ -25,35 +27,40 @@ class Issue {
     this.fixer,
     this.assignee,
     this.state = IState.NEW,
+    required this.reporterNickname,
+    required this.assigneeNickname,
   });
 
   factory Issue.fromJson(Map<String, dynamic> json) {
     return Issue(
-      id: json['id'] ?? 0,
-      title: json['title'] ?? '',
-      description: json['description'] ?? '',
-      reporter: json['reporter'] ?? 0,
-      date: DateTime.tryParse(json['date'] ?? '') ?? DateTime.now(),
-      priority: IPriority.values[json['priority'] ?? 0],
-      projectId: json['project_id'] ?? 0,
-      fixer: json['fixer'],
-      assignee: json['assignee'],
-      state: IState.values[json['state'] ?? 0],
+      id: json['responseIssue']['id'] ?? 0,
+      title: json['responseIssue']['title'] ?? '',
+      description: json['responseIssue']['description'] ?? '',
+      reporter: json['responseIssue']['reporter_id'] ?? 0,
+      date: DateTime.tryParse(json['responseIssue']['date'] ?? '') ??
+          DateTime.now(),
+      priority: IPriority.values.firstWhere(
+          (e) =>
+              e.toString() == 'IPriority.${json['responseIssue']['priority']}',
+          orElse: () => IPriority.TRIVIAL),
+      projectId: json['responseIssue']['project_id'] ?? 0,
+      fixer: json['responseIssue']['fixer_id'],
+      assignee: json['responseIssue']['assignee_id'],
+      state: IState.values.firstWhere(
+          (e) => e.toString() == 'IState.${json['responseIssue']['state']}',
+          orElse: () => IState.NEW),
+      reporterNickname: json['reporter_nickname'] ?? '',
+      assigneeNickname: json['assignee_nickname'] ?? '',
     );
   }
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'title': title,
       'description': description,
-      'reporter': reporter,
-      'date': date.toIso8601String(),
-      'priority': priority.index,
+      'reporter_id': reporter,
+      'priority': priority.toString().split('.').last,
       'project_id': projectId,
-      'fixer': fixer,
-      'assignee': assignee,
-      'state': state.index,
     };
   }
 }

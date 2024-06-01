@@ -200,7 +200,7 @@ class LoginPage extends StatelessWidget {
 
                           // 회원가입 버튼 ******************************
                           SizedBox(height: screenHeight * 0.03),
-                          Container(
+                          SizedBox(
                             width: formFieldWidth,
                             child: OutlinedButton(
                               onPressed: () {

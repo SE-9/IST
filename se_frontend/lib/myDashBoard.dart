@@ -9,7 +9,9 @@ import 'package:se_frontend/issue_list.dart';
 import 'package:http/http.dart' as http;
 
 Future<List<Project>> fetchProjects(String userId) async {
+
   //주어진 유저 아이디로 프로젝트 가져오기
+
   try {
     //예외처리
     final response = await http.get(
@@ -18,8 +20,10 @@ Future<List<Project>> fetchProjects(String userId) async {
         'Content-Type': 'application/json; charset=UTF-8',
       },
     );
+
     //print('HTTP response status: ${response.statusCode}');
     //print('HTTP response body: ${response.body}');
+
 
     if (response.statusCode == 200) {
       final List<dynamic> projectJson = json.decode(response.body);
@@ -29,10 +33,10 @@ Future<List<Project>> fetchProjects(String userId) async {
       return projectJson.map((json) {
         //프로젝트 JSON을 프로젝트로 변환
         try {
-          print('Project JSON: $json'); // 디버깅 메시지
+          //print('Project JSON: $json'); // 디버깅 메시지
           return Project.fromJson(json);
         } catch (e) {
-          print('Error parsing project JSON: $e');
+          //print('Error parsing project JSON: $e')
           throw Exception('Error parsing project JSON: $e');
         }
       }).toList();
@@ -53,12 +57,18 @@ Future<List<Issue>> fetchIssues(String userId) async {
     },
   );
 
-  if (response.statusCode == 200) {
-    final List<dynamic> issueJson =
-        json.decode(response.body); // JSON 데이터를 Issue 객체로 변환하여 리스트로 반환
-    return issueJson.map((json) => Issue.fromJson(json)).toList();
-  } else {
-    throw Exception('Failed to load issues');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> issueJson = json.decode(response.body);
+      if (issueJson.isEmpty) {
+        print('No issues found in the database for user: $userId');
+      }
+      return issueJson.map((json) => Issue.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load issues');
+    }
+  } catch (e) {
+    throw Exception('Error fetching issues: $e');
   }
 }
 

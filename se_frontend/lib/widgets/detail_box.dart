@@ -46,6 +46,7 @@ class DetailBox extends StatelessWidget {
               ],
             ),
           ),
+          const SizedBox(height: 25),
         ],
       ),
     );

@@ -4,7 +4,7 @@ class Project {
   final int id;
   final String title;
   final int leaderId;
-  final String leaderNickname;
+
   final List<Issue> issues;
   final List<Member> members;
 
@@ -12,7 +12,6 @@ class Project {
     required this.id,
     required this.title,
     required this.leaderId,
-    required this.leaderNickname,
     required this.issues,
     required this.members,
   });
@@ -23,7 +22,6 @@ class Project {
       id: projectDTO['id'] ?? 0,
       title: projectDTO['title'] ?? '',
       leaderId: projectDTO['leader_id'] ?? 0,
-      leaderNickname: json['leader_nickname'] ?? '', //리더 닉네임 파싱
       issues: (projectDTO['issues'] as List<dynamic>?)
               ?.map((i) => Issue.fromJson(i))
               .toList() ??
@@ -41,7 +39,6 @@ class Project {
       'id': id,
       'title': title,
       'leader_id': leaderId,
-      'leader_nickname': leaderNickname,
       'issues': issues.map((i) => i.toJson()).toList(),
       'members': members.map((m) => m.toJson()).toList(),
     };

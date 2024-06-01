@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:se_frontend/files/issueClass.dart';
 import 'issue_input_field.dart';
 import 'widgets/issue_card.dart';
-import 'package:se_frontend/files/issueClass.dart'; // 필요한 파일 경로에 맞게 수정하세요
+import 'issue_detail.dart';
 
 class IssueListPage extends StatefulWidget {
   const IssueListPage({super.key});
@@ -12,6 +13,7 @@ class IssueListPage extends StatefulWidget {
 
 class IssueListPageState extends State<IssueListPage> {
   List<Issue> issues = [];
+
   List<Issue> filteredIssues = [];
   String selectedStatus = 'All'; // 현재 선택된 상태를 저장
 
@@ -107,10 +109,12 @@ class IssueListPageState extends State<IssueListPage> {
                   },
                   items: <String>[
                     'All',
-                    'OPEN',
-                    'IN_PROGRESS',
+                    'NEW',
+                    'ASSIGNED',
+                    'FIXED',
                     'RESOLVED',
-                    'CLOSED'
+                    'CLOSED',
+                    'REOPEND'
                   ].map<DropdownMenuItem<String>>((String value) {
                     return DropdownMenuItem<String>(
                       value: value,
@@ -126,11 +130,21 @@ class IssueListPageState extends State<IssueListPage> {
               itemCount: filteredIssues.length,
               itemBuilder: (context, index) {
                 final issue = filteredIssues[index];
-                return IssueCard(
-                  title: issue.title,
-                  status: issue.state.toString().split('.').last,
-                  reporter: issue.reporter.toString(),
-                  assignee: issue.assignee?.toString() ?? 'Unassigned',
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => IssueDetail(issue: issue),
+                      ),
+                    );
+                  },
+                  child: IssueCard(
+                    title: issue.title,
+                    status: issue.state.toString().split('.').last,
+                    reporter: issue.reporter.toString(),
+                    assignee: issue.assignee?.toString() ?? 'Unassigned',
+                  ),
                 );
               },
             ),
@@ -140,7 +154,7 @@ class IssueListPageState extends State<IssueListPage> {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                    builder: (context) => const IssueInputField(isPL: true)),
+                    builder: (context) => const IssueInputField()),
               );
             },
             child: const Text('이슈 등록'),
