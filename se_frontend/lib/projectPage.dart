@@ -9,6 +9,7 @@ import 'package:se_frontend/add_member.dart';
 
 // 개별 프로젝트 페이지
 class ProjectPage extends StatefulWidget {
+
   final Project project; //현재 프로젝트 전달용
   final String userId; // 유저 아이디 전달용
 
@@ -18,11 +19,13 @@ class ProjectPage extends StatefulWidget {
     required this.userId,
   }) : super(key: key);
 
+
   @override
   _ProjectPageState createState() => _ProjectPageState();
 }
 
 class _ProjectPageState extends State<ProjectPage> {
+
   late Project _project; //플젝 정보저장 함수
 
   @override
@@ -31,6 +34,7 @@ class _ProjectPageState extends State<ProjectPage> {
     super.initState();
     _project = widget.project; //위젯에서 전달받은 플젝 정보 초기화
     _fetchProject(); //서버에서 플젝 정보 가져오기
+
   }
 
   Future<void> _fetchProject() async {
@@ -44,8 +48,9 @@ class _ProjectPageState extends State<ProjectPage> {
 
       if (response.statusCode == 200) {
         setState(() {
-          _project = Project.fromJson(
-              json.decode(response.body)); // JSON 데이터 -> 프로젝트 객체로 변환
+
+          _project = Project.fromJson(json.decode(response.body));
+
         });
       } else {
         throw Exception('Failed to load project');
@@ -55,10 +60,9 @@ class _ProjectPageState extends State<ProjectPage> {
     }
   }
 
-//서버에서 이슈 목록 가져오기
+
   Future<List<Issue>> fetchIssues() async {
     final response = await http.get(
-
       Uri.parse('http://localhost:8081/project/${_project.id}/issues'),
 
       headers: <String, String>{
@@ -128,7 +132,9 @@ class _ProjectPageState extends State<ProjectPage> {
               ),
               alignment: Alignment.center,
               child: Text(
-                "${_project.leaderNickname}",
+
+                _project.leaderNickname,
+
                 style: const TextStyle(
                   fontSize: 25,
                   color: Colors.white,

@@ -21,8 +21,8 @@ Future<List<Project>> fetchProjects(String userId) async {
       },
     );
 
-    //print('HTTP response status: ${response.statusCode}');
-    //print('HTTP response body: ${response.body}');
+    print('HTTP response status: ${response.statusCode}');
+    print('HTTP response body: ${response.body}');
 
 
     if (response.statusCode == 200) {
@@ -33,10 +33,10 @@ Future<List<Project>> fetchProjects(String userId) async {
       return projectJson.map((json) {
         //프로젝트 JSON을 프로젝트로 변환
         try {
-          //print('Project JSON: $json'); // 디버깅 메시지
+          print('Project JSON: $json'); // 디버깅 메시지
           return Project.fromJson(json);
         } catch (e) {
-          //print('Error parsing project JSON: $e')
+          print('Error parsing project JSON: $e');
           throw Exception('Error parsing project JSON: $e');
         }
       }).toList();
@@ -57,18 +57,12 @@ Future<List<Issue>> fetchIssues(String userId) async {
     },
   );
 
-
-    if (response.statusCode == 200) {
-      final List<dynamic> issueJson = json.decode(response.body);
-      if (issueJson.isEmpty) {
-        print('No issues found in the database for user: $userId');
-      }
-      return issueJson.map((json) => Issue.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load issues');
-    }
-  } catch (e) {
-    throw Exception('Error fetching issues: $e');
+  if (response.statusCode == 200) {
+    final List<dynamic> issueJson =
+        json.decode(response.body); // JSON 데이터를 Issue 객체로 변환하여 리스트로 반환
+    return issueJson.map((json) => Issue.fromJson(json)).toList();
+  } else {
+    throw Exception('Failed to load issues');
   }
 }
 
@@ -94,6 +88,7 @@ class MyDashboard extends StatelessWidget {
                 const SizedBox(width: 30),
                 Expanded(
                   child: TextButton(
+                    // 이슈 검색 버튼
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
                           horizontal: 20.0, vertical: 15.0),
@@ -106,7 +101,8 @@ class MyDashboard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const IssueListPage()),
+                            builder: (context) => IssueListPage(
+                                userNickname: userId)), // userNickname임
                       );
                     },
                     child: const Row(
