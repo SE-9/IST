@@ -4,10 +4,12 @@ import 'package:se_frontend/files/projectClass.dart';
 
 class ProjectBox extends StatelessWidget {
   final Project project;
+  final String userId; //유저 아이디 플젝 페이지에 전달
 
   const ProjectBox({
     super.key,
     required this.project,
+    required this.userId,
   });
 
   @override
@@ -18,7 +20,7 @@ class ProjectBox extends StatelessWidget {
         Navigator.push(
           context,
           MaterialPageRoute(
-            builder: (context) => ProjectPage(project: project),
+            builder: (context) => ProjectPage(project: project, userId: userId),
           ),
         );
       },
@@ -39,7 +41,11 @@ class ProjectBox extends StatelessWidget {
               style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
             const SizedBox(height: 10),
-            Text('Leader: ${project.leaderId}'),
+            Text('Leader: ${project.leaderNickname}'),
+            const SizedBox(height: 10),
+            ...project.members.map((member) {
+              return Text('Member: ${member.nickname}');
+            }),
           ],
         ),
       ),

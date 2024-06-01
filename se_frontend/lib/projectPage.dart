@@ -5,19 +5,57 @@ import 'package:se_frontend/files/projectClass.dart';
 import 'package:se_frontend/issue_input_field.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:se_frontend/add_member.dart';
 
 // 개별 프로젝트 페이지
-class ProjectPage extends StatelessWidget {
+class ProjectPage extends StatefulWidget {
   final Project project;
+  final String userId; // 유저 아이디 전달
 
   const ProjectPage({
     super.key,
     required this.project,
+    required this.userId,
   });
+
+  @override
+  _ProjectPageState createState() => _ProjectPageState();
+}
+
+class _ProjectPageState extends State<ProjectPage> {
+  late Project _project;
+
+  @override
+  void initState() {
+    super.initState();
+    _project = widget.project;
+    _fetchProject();
+  }
+
+  Future<void> _fetchProject() async {
+    try {
+      final response = await http.get(
+        Uri.parse('http://localhost:8081/project/${_project.id}'),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        setState(() {
+          _project = Project.fromJson(json.decode(response.body));
+        });
+      } else {
+        throw Exception('Failed to load project');
+      }
+    } catch (e) {
+      print('Error fetching project: $e');
+    }
+  }
 
   Future<List<Issue>> fetchIssues() async {
     final response = await http.get(
-      Uri.parse('http://localhost:8081/project/${project.id}/issues'),
+      Uri.parse('http://localhost:8081/project/${_project.id}/issues'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -61,7 +99,7 @@ class ProjectPage extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              project.title,
+              _project.title,
               style: const TextStyle(
                 fontSize: 25,
                 fontWeight: FontWeight.w900,
@@ -83,13 +121,45 @@ class ProjectPage extends StatelessWidget {
               ),
               alignment: Alignment.center,
               child: Text(
-                "${project.leaderId}",
+                _project.leaderNickname,
                 style: const TextStyle(
                   fontSize: 25,
                   color: Colors.white,
                   fontWeight: FontWeight.w900,
                 ),
               ),
+            ),
+            // 멤버들 리스트
+            const SizedBox(height: 20),
+            const Text(
+              "Members",
+              style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
+            ),
+            const SizedBox(height: 10),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: _project.members.map((member) {
+                return Text(
+                  member.nickname,
+                  style: const TextStyle(fontSize: 18),
+                );
+              }).toList(),
+            ),
+            // 멤버 추가 버튼
+            const SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () async {
+                final result = await Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AddMember(projectId: _project.id),
+                  ),
+                );
+                if (result == true) {
+                  _fetchProject(); // 돌아온 후 프로젝트 데이터 새로 고침
+                }
+              },
+              child: const Text('Add Member'),
             ),
             // 이슈 생성란 이동 버튼
             const SizedBox(height: 50),
@@ -104,8 +174,8 @@ class ProjectPage extends StatelessWidget {
                       context,
                       MaterialPageRoute(
                         builder: (context) => IssueInputField(
-                          projectId: project.id,
-                          reporterNickname: 1, // 여기서 실제 reporterId를 전달해야 합니다.
+                          projectId: _project.id, //플젝 아이디 전달
+                          reporterNickname: widget.userId, //유저 닉네임 전달
                         ),
                       ),
                     );
@@ -132,7 +202,6 @@ class ProjectPage extends StatelessWidget {
               style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
             ),
             const SizedBox(height: 10),
-
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(15.0),
