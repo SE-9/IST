@@ -4,13 +4,12 @@ import 'package:se_frontend/issue_detail.dart';
 
 class IssueBox extends StatelessWidget {
   final Issue issue;
-  final String userNickname;
+  final int userId;
 
   const IssueBox({
     super.key,
     required this.issue,
-    required this.userNickname,
-    required int userid,
+    required this.userId,
   });
 
   @override
@@ -23,7 +22,7 @@ class IssueBox extends StatelessWidget {
           MaterialPageRoute(
             builder: (context) => IssueDetail(
               issue: issue,
-              userNickname: userNickname,
+              userId: userId,
             ),
           ),
         );

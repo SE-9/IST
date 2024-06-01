@@ -99,9 +99,9 @@ class MyDashboard extends StatelessWidget {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                            builder: (context) => const IssueListPage(
-                                userNickname: '닉네임' //류: 여기도 닉네임 아직 못뺌
-                                )), // userNickname임
+                            builder: (context) =>
+                                IssueListPage(userId: userId //
+                                    )), // userId
                       );
                     },
                     child: const Row(
@@ -223,9 +223,9 @@ class MyDashboard extends StatelessWidget {
                             child: Row(
                               children: issues.map((issue) {
                                 return IssueBox(
-                                    issue: issue,
-                                    userNickname: '닉네임',
-                                    userid: userId); //류: 여기도 닉네임 나중에 뺴야함
+                                  issue: issue,
+                                  userId: userId,
+                                ); //류: 여기도 닉네임 나중에 뺴야함, 소 : userId로 이름 변경
                               }).toList(),
                             ),
                           ),

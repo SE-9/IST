@@ -178,7 +178,7 @@ class _ProjectPageState extends State<ProjectPage> {
                       MaterialPageRoute(
                         builder: (context) => IssueInputField(
                           projectId: _project.id, //플젝 아이디 전달
-                          reporterNickname: widget.userId, //유저 닉네임 전달
+                          userId: widget.userId, //유저 닉네임 전달
                         ),
                       ),
                     );
@@ -233,8 +233,7 @@ class _ProjectPageState extends State<ProjectPage> {
                         children: issues.map((issue) {
                           return IssueBox(
                             issue: issue,
-                            userNickname: '닉네임',
-                            userid: widget
+                            userId: widget
                                 .userId, //류: 여기 수정해야되는데 닉네임 부분 뺴기 너무 벅차서 일단 닉네임이라고 해둠
                           ); //이슈 박스로 리턴
                         }).toList(),

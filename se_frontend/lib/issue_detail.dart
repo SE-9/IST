@@ -11,12 +11,12 @@ import 'package:se_frontend/widgets/detail_box.dart';
 
 class IssueDetail extends StatefulWidget {
   final Issue issue;
-  final String userNickname;
+  final int userId;
 
   const IssueDetail({
     super.key,
     required this.issue,
-    required this.userNickname,
+    required this.userId,
   });
 
   @override
@@ -44,7 +44,7 @@ class _IssueDetailState extends State<IssueDetail> {
 // 나머지 상태 변경 전송
   Future<void> _updateState() async {
     final url =
-        'http://localhost:8081/issue/${widget.issue.id}/update/${widget.userNickname}'; //  로그인한 user의 닉네임 넘겨줌.
+        'http://localhost:8081/issue/${widget.issue.id}/update/${widget.userId}'; //  로그인한 user의 닉네임 넘겨줌.
     final headers = {"Content-Type": "application/json"};
     final oldState =
         widget.issue.state.toString().split('.').last.toLowerCase();
@@ -89,7 +89,7 @@ class _IssueDetailState extends State<IssueDetail> {
     }
 
     final url =
-        'http://localhost:8081/issue/${widget.issue.id}/update/${widget.userNickname}';
+        'http://localhost:8081/issue/${widget.issue.id}/update/${widget.userId}';
     final headers = {"Content-Type": "application/json"};
     const oldState = 'new';
     const newState = 'assigned';
