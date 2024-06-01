@@ -1,12 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
-import 'package:http/http.dart' as http;
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'dart:convert';
 
-class IssueInputField extends StatefulWidget {
-  final bool isPL;
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
-  const IssueInputField({super.key, required this.isPL});
+import 'package:se_frontend/files/issueClass.dart';
+import 'package:se_frontend/myDashBoard.dart';
+
+class IssueInputField extends StatefulWidget {
+  final int projectId;
+  final Stirng reporterNickname; // 수정이한테 받아야 함.
+
+  const IssueInputField({
+    super.key,
+    required this.projectId,
+    required this.reporterNickname,
+  });
 
   @override
   IssueInputFieldState createState() => IssueInputFieldState();
@@ -16,52 +25,62 @@ class IssueInputFieldState extends State<IssueInputField> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _titleController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _priorityController = TextEditingController();
-  final TextEditingController _assigneeController = TextEditingController();
+  IPriority? _selectedPriority; // 우선 순위에 대한 열거형 타입 사용
 
   Future<void> _submitForm() async {
     if (_formKey.currentState!.validate()) {
       final String title = _titleController.text;
       final String description = _descriptionController.text;
-      final String? priority =
-          _priorityController.text.isNotEmpty ? _priorityController.text : null;
-      final String? assignee =
-          widget.isPL && _assigneeController.text.isNotEmpty
-              ? _assigneeController.text
-              : null;
-      const String reporter = 'system_user'; // 시스템이 자동으로 채워줌, 처리 필요.
-      final String reportedDate =
-          DateFormat('yyyy-MM-dd').format(DateTime.now()); // 현재 날짜
+      final String priority =
+          _selectedPriority?.toString().split('.').last ?? '';
 
       final issueData = {
         'title': title,
         'description': description,
         'priority': priority,
-        'assignee': assignee,
-        'reporter': reporter,
-        'reportedDate': reportedDate,
+        'reporter_id': reporterId, // 본인 user id, 수정 필요
+        'project_id': 1,
       };
 
-      // 서버에 데이터 전송
-      final response = await http.post(
-        Uri.parse('https://yourapiendpoint.com/issues'), // 서버의 엔드포인트 URL로 변경
-        headers: {'Content-Type': 'application/json'},
-        body: json.encode(issueData),
-      );
-
-      if (response.statusCode == 200) {
-        // 서버에 데이터가 정상적으로 저장된 경우
-        print('Issue registered successfully');
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Issue registered successfully')),
+      try {
+        final response = await http.post(
+          Uri.parse('http://localhost:8081/project/issue/create'),
+          headers: {'Content-Type': 'application/json'},
+          body: json.encode(issueData),
         );
-        // 폼 초기화
-        _formKey.currentState!.reset();
-      } else {
-        // 서버에 데이터 저장 실패한 경우
-        print('Failed to register issue');
+
+        if (response.statusCode == 200) {
+          print('Issue 등록 성공');
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: const Text('Issue 등록 성공'),
+              duration: const Duration(seconds: 2),
+              onVisible: () {
+                // 스낵바가 보인 후 대시보드로 이동
+                Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => const MyDashboard(
+                            userId: reporterId,
+                          )), // 'YourNickname'을 적절한 값으로 대체
+                );
+              },
+            ),
+          );
+          _formKey.currentState!.reset();
+        } else {
+          print('Issue 등록 실패');
+          print('Response status: ${response.statusCode}');
+          print('Response body: ${response.body}');
+          print('\n\n$title, $description, $priority');
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text('Issue 등록 실패')),
+          );
+        }
+      } catch (e) {
+        print('Error: $e');
         ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Failed to register issue')),
+          SnackBar(content: Text('Error: $e')),
         );
       }
     }
@@ -97,15 +116,14 @@ class IssueInputFieldState extends State<IssueInputField> {
                 ),
               ),
               TextFormField(
-                // title 입력
                 controller: _titleController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: inputField,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0), // 모서리 둥글게
-                    borderSide: BorderSide.none, // 테두리 없음
-                  ), // 힌트 텍스트 색상
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
                 style: const TextStyle(color: Colors.white),
                 validator: (value) {
@@ -115,9 +133,7 @@ class IssueInputFieldState extends State<IssueInputField> {
                   return null;
                 },
               ),
-              SizedBox(
-                height: blank,
-              ),
+              SizedBox(height: blank),
               const Text(
                 'Description',
                 style: TextStyle(
@@ -126,15 +142,14 @@ class IssueInputFieldState extends State<IssueInputField> {
                 ),
               ),
               TextFormField(
-                // description 입력
                 controller: _descriptionController,
                 decoration: InputDecoration(
                   filled: true,
                   fillColor: inputField,
                   border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0), // 모서리 둥글게
-                    borderSide: BorderSide.none, // 테두리 없음
-                  ), // 힌트 텍스트 색상
+                    borderRadius: BorderRadius.circular(12.0),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
                 style: const TextStyle(color: Colors.white),
                 validator: (value) {
@@ -144,9 +159,7 @@ class IssueInputFieldState extends State<IssueInputField> {
                   return null;
                 },
               ),
-              SizedBox(
-                height: blank,
-              ),
+              SizedBox(height: blank),
               const Text(
                 'Priority (Optional)',
                 style: TextStyle(
@@ -154,43 +167,20 @@ class IssueInputFieldState extends State<IssueInputField> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              TextFormField(
-                //  priority 입력
-                controller: _priorityController,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: inputField,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12.0), // 모서리 둥글게
-                    borderSide: BorderSide.none, // 테두리 없음
-                  ), // 힌트 텍스트 색상
-                ),
-                style: const TextStyle(color: Colors.white),
+              DropdownButton<IPriority>(
+                value: _selectedPriority,
+                onChanged: (IPriority? newValue) {
+                  setState(() {
+                    _selectedPriority = newValue;
+                  });
+                },
+                items: IPriority.values.map((priority) {
+                  return DropdownMenuItem(
+                    value: priority,
+                    child: Text(priority.toString().split('.').last),
+                  );
+                }).toList(),
               ),
-              SizedBox(
-                height: blank,
-              ),
-              const Text(
-                'Assignee (Optional for PL)',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              if (widget.isPL)
-                TextFormField(
-                  // assignee 입력
-                  controller: _assigneeController,
-                  decoration: InputDecoration(
-                    filled: true,
-                    fillColor: inputField,
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(12.0), // 모서리 둥글게
-                      borderSide: BorderSide.none, // 테두리 없음
-                    ), // 힌트 텍스트 색상
-                  ),
-                  style: const TextStyle(color: Colors.white),
-                ),
               SizedBox(height: blank),
               ElevatedButton(
                 onPressed: _submitForm,

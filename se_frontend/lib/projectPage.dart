@@ -17,7 +17,7 @@ class ProjectPage extends StatelessWidget {
 
   Future<List<Issue>> fetchIssues() async {
     final response = await http.get(
-      Uri.parse('http://localhost:8081/project/$project'),
+      Uri.parse('http://localhost:8081/project/${project.id}/issues'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
@@ -34,6 +34,7 @@ class ProjectPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width; // 넓이
+    ScrollController scrollController = ScrollController();
 
     // 화면 크기에 따라 폰트 크기와 패딩을 동적으로 설정
     double fontSize = screenWidth < 850 ? 18 : 18;
@@ -102,8 +103,9 @@ class ProjectPage extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => const IssueInputField(
-                          isPL: true, // isPL 처리 필요
+                        builder: (context) => IssueInputField(
+                          projectId: project.id,
+                          reporterNickname: 1, // 여기서 실제 reporterId를 전달해야 합니다.
                         ),
                       ),
                     );
@@ -151,7 +153,9 @@ class ProjectPage extends StatelessWidget {
 
                   final issues = snapshot.data!;
                   return Scrollbar(
+                    controller: scrollController,
                     child: SingleChildScrollView(
+                      controller: scrollController,
                       scrollDirection: Axis.horizontal,
                       child: Row(
                         children: issues.map((issue) {

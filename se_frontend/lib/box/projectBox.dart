@@ -6,6 +6,7 @@ class ProjectBox extends StatelessWidget {
   final Project project;
 
   const ProjectBox({
+    super.key,
     required this.project,
   });
 

@@ -106,7 +106,7 @@ class _CreateProjectState extends State<CreateProject> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Create Project'),
+        title: const Text('Create Project'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -114,11 +114,11 @@ class _CreateProjectState extends State<CreateProject> {
           children: [
             TextField(
               controller: _titleController, // 제목 입력 컨트롤러 연결
-              decoration: InputDecoration(labelText: 'Title'),
+              decoration: const InputDecoration(labelText: 'Title'),
             ),
             TextField(
               controller: _leaderController, // 리더 입력 컨트롤러 연결
-              decoration: InputDecoration(labelText: 'Leader Nickname'),
+              decoration: const InputDecoration(labelText: 'Leader Nickname'),
               onChanged: (value) async {
                 if (value.isNotEmpty) {
                   setState(() {
@@ -132,15 +132,15 @@ class _CreateProjectState extends State<CreateProject> {
               },
             ),
             if (_isLoading) // 로딩 중일 때
-              CircularProgressIndicator() // 로딩 인디케이터 표시
+              const CircularProgressIndicator() // 로딩 인디케이터 표시
             else if (_errorMessage != null) // 에러 메시지가 있으면
               Text(
                 _errorMessage!,
-                style: TextStyle(color: Colors.red), // 에러 메시지 스타일 설정
+                style: const TextStyle(color: Colors.red), // 에러 메시지 스타일 설정
               )
             else if (_leaderId != null) // 리더 ID가 있으면
               Text('Leader ID: $_leaderId'), // 리더 ID 표시
-            SizedBox(height: 20), // 여백 추가
+            const SizedBox(height: 20), // 여백 추가
             ElevatedButton(
               onPressed: _leaderId == null
                   ? null // 리더 ID가 없으면 버튼 비활성화
@@ -148,7 +148,7 @@ class _CreateProjectState extends State<CreateProject> {
                       await _createProject(
                           _titleController.text, _leaderId!); // 프로젝트 생성
                     },
-              child: Text('Create Project'), // 버튼 텍스트
+              child: const Text('Create Project'), // 버튼 텍스트
             ),
           ],
         ),

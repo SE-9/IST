@@ -1,5 +1,3 @@
-import 'package:flutter/material.dart';
-
 enum IPriority { BLOCKER, CRITICAL, MAJOR, MINOR, TRIVIAL }
 
 enum IState { NEW, ASSIGNED, FIXED, RESOLVED, CLOSED, REOPENED }
@@ -58,18 +56,11 @@ class Issue {
 
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
       'title': title,
       'description': description,
-      'reporter': reporter,
-      'date': date.toIso8601String(),
-      'priority': priority.index,
+      'reporter_id': reporter,
+      'priority': priority.toString().split('.').last,
       'project_id': projectId,
-      'fixer': fixer,
-      'assignee': assignee,
-      'state': state.index,
-      'reporter_nickname': reporterNickname,
-      'assignee_nickname': assigneeNickname,
     };
   }
 }
