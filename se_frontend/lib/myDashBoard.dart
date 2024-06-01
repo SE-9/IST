@@ -173,7 +173,8 @@ class MyDashboard extends StatelessWidget {
                               children: projects.map((project) {
                                 print(
                                     'Project title: ${project.title}'); // 디버깅 메시지
-                                return ProjectBox(project: project);
+                                return ProjectBox(
+                                    project: project, userId: userId);
                               }).toList(),
                             ),
                           ),
