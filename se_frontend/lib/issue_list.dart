@@ -130,7 +130,8 @@ class IssueListPageState extends State<IssueListPage> {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => IssueDetail(issue: issue),
+                        builder: (context) => IssueDetail(
+                            issue: issue, userNickname: widget.userNickname),
                       ),
                     );
                   },
