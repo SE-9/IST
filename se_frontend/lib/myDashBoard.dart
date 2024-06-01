@@ -8,11 +8,6 @@ import 'package:se_frontend/box/projectBox.dart';
 import 'package:se_frontend/issue_list.dart';
 import 'package:http/http.dart' as http;
 
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:se_frontend/files/issueClass.dart';
-import 'package:se_frontend/files/projectClass.dart';
-
 Future<List<Project>> fetchProjects(int userId) async {
   try {
     final response = await http.get(
@@ -22,8 +17,8 @@ Future<List<Project>> fetchProjects(int userId) async {
       },
     );
 
-    print('HTTP response status: ${response.statusCode}');
-    print('HTTP response body: ${response.body}');
+    //print('HTTP response status: ${response.statusCode}');
+    //print('HTTP response body: ${response.body}');
 
     if (response.statusCode == 200) {
       final List<dynamic> projectJson =
@@ -53,15 +48,41 @@ Future<List<Project>> fetchProjects(int userId) async {
 
 // 백엔드에서 이슈 리스트를 받아오는 함수
 Future<List<Issue>> fetchIssues(int userId) async {
-  final response =
-      await http.get(Uri.parse('http://localhost:8081/issue/my/$userId'));
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:8081/issue/my/$userId'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
 
-  if (response.statusCode == 200) {
-    // JSON 응답을 파싱하여 이슈 리스트로 변환
-    List<dynamic> jsonResponse = json.decode(response.body);
-    return jsonResponse.map((issueJson) => Issue.fromJson(issueJson)).toList();
-  } else {
-    throw Exception('Failed to load issues');
+    print('HTTP response status: ${response.statusCode}');
+    print('HTTP response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      // JSON 응답을 파싱하여 이슈 리스트로 변환
+      final List<dynamic> jsonResponse =
+          json.decode(response.body) as List<dynamic>;
+      print('Decoded JSON length: ${jsonResponse.length}'); // 리스트 길이 출력
+      if (jsonResponse.isEmpty) {
+        print('No issues found in the database for user: $userId');
+      }
+
+      return jsonResponse.map((issueJson) {
+        try {
+          print('Issue JSON: $issueJson\n');
+          return Issue.fromJson(issueJson as Map<String, dynamic>);
+        } catch (e) {
+          print('Error parsing issue JSON: $e\n');
+          print('Invalid Issue JSON: $issueJson\n'); // 잘못된 JSON 데이터 출력
+          throw Exception('Error parsing issue JSON: $e');
+        }
+      }).toList();
+    } else {
+      throw Exception('Failed to load issues');
+    }
+  } catch (e) {
+    throw Exception('Error fetching issues: $e');
   }
 }
 
