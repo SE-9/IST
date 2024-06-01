@@ -17,7 +17,6 @@ class _CreateProjectState extends State<CreateProject> {
   final TextEditingController _leaderController =
       TextEditingController(); // 리더 입력 컨트롤러
   int? _leaderId; // 리더 id를 저장할 변수 (user_id임 결국엔)
-  int? _leaderNickname; //리더 닉네임으로 저장.. api 또 만들수 있으면 삭제..
   bool _isLoading = false; // 로딩 상태 변수
   String? _errorMessage; // 에러 메시지를 저장할 변수
 
@@ -36,8 +35,6 @@ class _CreateProjectState extends State<CreateProject> {
         setState(() {
           if (userId != null) {
             _leaderId = userId; // 성공하면 리더 id 에 user_id 저장 (int)
-            _leaderNickname =
-                userId; // 성공 시 리더 닉네임 저장 //류: 여기 코드 닉네임 가져오거나 리더 닉네임 가져오는거 필요
             _errorMessage = null; // 에러 메시지 초기화
           } else {
             _leaderId = null; // 실패하면 null로 저장
@@ -81,7 +78,7 @@ class _CreateProjectState extends State<CreateProject> {
 
       if (response.statusCode == 201 || response.statusCode == 200) {
         // 요청 성공하면 대시보드 이동
-        final responseData = jsonDecode(response.body); // 응답 본문을 JSON으로 디코드
+        jsonDecode(response.body); // 응답 본문을 JSON으로 디코드
         {
           Navigator.pushReplacement(
             context,
