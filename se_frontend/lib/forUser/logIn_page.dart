@@ -34,17 +34,16 @@ class LoginPage extends StatelessWidget {
 
         // 응답 본문에서 nickname을 추출
         if (responseBody != null && responseBody['user_id'] != null) {
-          String user_id = responseBody['user_id'];
+          String userId = responseBody['user_id'];
 
           // 로그인 성공 시 대시보드로 이동하며 닉네임 전달
           Navigator.pushReplacement(
             context,
             MaterialPageRoute(
-              builder: (context) => MyDashboard(nickname: nickname),
+              builder: (context) => MyDashboard(userId: userId),
             ),
           );
         } else {
-          print('Error: nickname not found in response body');
           ScaffoldMessenger.of(context).showSnackBar(
             const SnackBar(content: Text('본문에 nickname 존재하지 않음')),
           );

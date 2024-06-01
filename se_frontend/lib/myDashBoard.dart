@@ -1,59 +1,83 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
+import 'package:se_frontend/create_project.dart';
 import 'package:se_frontend/files/issueClass.dart';
 import 'package:se_frontend/files/projectClass.dart';
 import 'package:se_frontend/box/issueBox.dart';
 import 'package:se_frontend/box/projectBox.dart';
 import 'package:se_frontend/issue_list.dart';
+import 'package:http/http.dart' as http;
 
-// 프로젝트 fetch
-Future<List<Project>> fetchProjects(String userId) async {
-  // 여기에서 실제 백엔드 API 호출 코드로 대체해야 합니다.
-  // 예시로 List.generate를 사용했습니다.
-  return List.generate(
-    20,
-    (index) => Project(
-      title: 'Project ${index + 1} for user $userId',
-      description: 'Description of project ${index + 1} for user $userId',
-      leader: 'Leader ${index + 1}',
-    ),
-  );
+Future<List<Project>> fetchProjects(String user_id) async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:8081/project/my/$user_id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+    // print('HTTP response status: ${response.statusCode}');
+    // print('HTTP response body: ${response.body}');
+
+    if (response.statusCode == 200) {
+      final List<dynamic> projectJson = json.decode(response.body);
+      if (projectJson.isEmpty) {
+        print('No projects found in the database for user: $user_id');
+      }
+      return projectJson.map((json) {
+        try {
+          //print('Project JSON: $json'); // 디버깅 메시지
+          return Project.fromJson(json);
+        } catch (e) {
+          //print('Error parsing project JSON: $e')
+          throw Exception('Error parsing project JSON: $e');
+        }
+      }).toList();
+    } else {
+      throw Exception('Failed to load projects');
+    }
+  } catch (e) {
+    throw Exception('Error fetching projects: $e');
+  }
 }
 
-// 이슈 fetch
-Future<List<Issue>> fetchIssues() async {
-  return List.generate(
-    9,
-    (index) => Issue(
-      id: index + 1,
-      title: 'Issue ${index + 1}',
-      description: 'Description of issue ${index + 1}',
-      reporter: index + 1,
-      date: DateTime.now(),
-      priority: IPriority.MAJOR,
-      projectId: 101,
-      fixer: index + 2,
-      assignee: index + 3,
-      state: IState.NEW,
-    ),
-  );
+Future<List<Issue>> fetchIssues(String user_id) async {
+  try {
+    final response = await http.get(
+      Uri.parse('http://localhost:8081/issue/my/$user_id'),
+      headers: <String, String>{
+        'Content-Type': 'application/json; charset=UTF-8',
+      },
+    );
+
+    if (response.statusCode == 200) {
+      final List<dynamic> issueJson = json.decode(response.body);
+      if (issueJson.isEmpty) {
+        print('No issues found in the database for user: $user_id');
+      }
+      return issueJson.map((json) => Issue.fromJson(json)).toList();
+    } else {
+      throw Exception('Failed to load issues');
+    }
+  } catch (e) {
+    throw Exception('Error fetching issues: $e');
+  }
 }
 
 class MyDashboard extends StatelessWidget {
-  final String nickname;
-  const MyDashboard({super.key, required this.nickname});
+  final String userId;
+  const MyDashboard({super.key, required this.userId});
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: Column(
-        // 세로 배치
         children: [
-          // 제목, 검색창
           AppBar(
             title: Row(
               children: <Widget>[
                 const Text(
-                  'MY DASHBOARD',
+                  'MY DASHBOARD ',
                   style: TextStyle(
                     color: Colors.black,
                     fontWeight: FontWeight.w900,
@@ -92,15 +116,24 @@ class MyDashboard extends StatelessWidget {
               ],
             ),
           ),
-          // 시작 부분
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(15.0),
               child: Column(
-                // 자식 왼쪽 정렬
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  // 내 프로젝트 상자 ***************************
+                  if (userId == '1')
+                    ElevatedButton(
+                      onPressed: () async {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  CreateProject(userId: userId),
+                            ));
+                      },
+                      child: const Text('Create Project'),
+                    ),
                   const SizedBox(height: 10),
                   const Text('MY PROJECTS',
                       style: TextStyle(
@@ -113,36 +146,34 @@ class MyDashboard extends StatelessWidget {
                       borderRadius: BorderRadius.circular(15.0),
                       color: const Color.fromARGB(255, 146, 146, 146),
                     ),
-                    // 흰색 박스
                     height: 230,
                     width: double.infinity,
                     child: FutureBuilder<List<Project>>(
-                      future: fetchProjects(nickname),
+                      future: fetchProjects(userId),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {
                           return const Center(
                               child: CircularProgressIndicator());
                         } else if (snapshot.hasError) {
-                          return const Center(
-                              child: Text('Error loading projects'));
+                          print('Snapshot error: ${snapshot.error}');
+                          return Center(
+                            child: Text(
+                                'Error loading projects: ${snapshot.error}'),
+                          );
                         } else if (!snapshot.hasData ||
                             snapshot.data!.isEmpty) {
                           return const Center(child: Text('No projects found'));
                         }
-
                         final projects = snapshot.data!;
                         return Scrollbar(
                           child: SingleChildScrollView(
                             scrollDirection: Axis.horizontal,
                             child: Row(
                               children: projects.map((project) {
-                                return const ProjectBox(
-                                  title: '백에서 받아와야 함',
-                                  description: '프로젝트 설명 받아와야 함',
-                                  leader: '리더 누군지 받아와야 함',
-                                  // project: project,
-                                );
+                                print(
+                                    'Project title: ${project.title}'); // 디버깅 메시지
+                                return ProjectBox(project: project);
                               }).toList(),
                             ),
                           ),
@@ -151,7 +182,6 @@ class MyDashboard extends StatelessWidget {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  //내 이슈들 상자*******************************
                   const Text(
                     'MY ISSUES',
                     style: TextStyle(
@@ -168,7 +198,7 @@ class MyDashboard extends StatelessWidget {
                     height: 230,
                     width: double.infinity,
                     child: FutureBuilder<List<Issue>>(
-                      future: fetchIssues(),
+                      future: fetchIssues(userId),
                       builder: (context, snapshot) {
                         if (snapshot.connectionState ==
                             ConnectionState.waiting) {

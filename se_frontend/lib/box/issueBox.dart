@@ -5,12 +5,15 @@ import 'package:se_frontend/issue_detail.dart';
 class IssueBox extends StatelessWidget {
   final Issue issue;
 
-  const IssueBox({super.key, required this.issue});
+  const IssueBox({
+    super.key,
+    required this.issue,
+  });
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // 누르면 프로젝트 페이지로 이동하게 제스쳐
+      // 누르면 이슈 상세 페이지로 이동하게 제스처
       onTap: () {
         Navigator.push(
           context,
@@ -38,10 +41,32 @@ class IssueBox extends StatelessWidget {
                 fontWeight: FontWeight.bold,
               ),
             ),
-            Text(issue.state.toString().split('.').last),
+            Text('상태: ${issue.state.toString().split('.').last}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                )),
             const SizedBox(height: 10),
-            Text(issue.assignee?.toString() ?? 'Unassigned'),
-            Text(issue.reporter.toString()),
+            Text(
+                '담당자: ${issue.assigneeNickname.isNotEmpty ? issue.assigneeNickname : 'Unassigned'}',
+                style: const TextStyle(
+                  fontSize: 14,
+                )),
+            Text('보고자: ${issue.reporterNickname}',
+                style: const TextStyle(
+                  fontSize: 14,
+                )),
+            const SizedBox(height: 10),
+            Text('우선순위: ${issue.priority.toString().split('.').last}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                )),
+            Text('프로젝트 ID: ${issue.projectId}',
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Colors.grey,
+                )),
           ],
         ),
       ),
