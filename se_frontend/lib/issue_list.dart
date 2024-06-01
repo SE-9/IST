@@ -5,12 +5,14 @@ import 'package:se_frontend/files/issueClass.dart'; // 이슈 클래스 임포�
 import 'widgets/issue_card.dart';
 import 'issue_detail.dart';
 
+// 이슈 리스트를 보고 검색 가능
+
 class IssueListPage extends StatefulWidget {
-  final String userNickname; // 유저 닉네임 추가
+  final int userId; // 유저 id
 
   const IssueListPage({
     super.key,
-    required this.userNickname, // 생성자에서 userNickname을 요구
+    required this.userId, 
   });
 
   @override
@@ -31,7 +33,7 @@ class IssueListPageState extends State<IssueListPage> {
   Future<void> _fetchIssues() async {
     try {
       final response = await http.get(
-        Uri.parse('http://localhost:8081/issue/my/${widget.userNickname}'),
+        Uri.parse('http://localhost:8081/issue/my/${widget.userId}'),
         headers: {
           'Content-Type': 'application/json; charset=UTF-8',
         },
@@ -131,7 +133,7 @@ class IssueListPageState extends State<IssueListPage> {
                       context,
                       MaterialPageRoute(
                         builder: (context) => IssueDetail(
-                            issue: issue, userNickname: widget.userNickname),
+                            issue: issue, userId: widget.userId),
                       ),
                     );
                   },
