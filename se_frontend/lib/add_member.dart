@@ -5,9 +5,7 @@ import 'dart:convert';
 class AddMember extends StatefulWidget {
   final int projectId;
 
-
   const AddMember({Key? key, required this.projectId}) : super(key: key);
-
 
   @override
   _AddMemberState createState() => _AddMemberState();
