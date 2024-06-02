@@ -1,0 +1,302 @@
+@startuml
+class com.se.demo.entity.ProjectEntity {
+- int id
+- String title
+- int leader_id
+- List<IssueEntity> issues
+- List<MemberEntity> members
++ {static} ProjectEntity toProjectEntity(ProjectDTO)
+}
+
+
+interface com.se.demo.repository.MemberRepository {
+~ Optional<MemberEntity> findByNickname(String)
+~ boolean existsByNickname(String)
+}
+
+class com.se.demo.ProjectConsole {
++ {static} void main(String[])
+}
+
+interface com.se.demo.repository.ProjectRepository {
+}
+class com.se.demo.entity.MemberEntity {
+- int user_id
+- String nickname
+- String password
+- List<ProjectEntity> projects
++ {static} MemberEntity toMemberEntity(MemberDTO)
+}
+
+
+class com.se.demo.entity.IssueEntity {
+- int id
+- String state
+- int plId
+- String title
+- String description
+- int reporterId
+- int fixerId
+- Integer assigneeId
+- String priority
+- List<CommentEntity> comments
+- ProjectEntity project
++ {static} IssueEntity toIssueEntity(IssueDTO,ProjectRepository)
+}
+
+
+class com.se.demo.dto.IssueDTO {
+- int id
+- String title
+- String description
+- Integer reporter_id
+- LocalDateTime date
+- int fixer_id
+- int assignee_id
+- String priority
+- String state
+- int pl_id
+- List<CommentDTO> comments
+- int project_id
++ {static} IssueDTO toIssueDTO(IssueEntity)
+}
+
+
+class com.se.demo.dto.MonthlyAnalysisDTO {
+- int month
+- int newCnt
+- int assignedCnt
+- int fixedCnt
+- int resolvedCnt
+- int closedCnt
+- int reopened
+}
+
+class com.se.demo.dto.ResponseIssueDTO {
+- IssueDTO responseIssue
+- String reporter_nickname
+- String assignee_nickname
++ String getTitle()
++ String getId()
++ String getDescription()
++ String getCreatedDate()
++ String getCreatorId()
+}
+
+
+class com.se.demo.entity.CommentEntity {
+- int id
+- LocalDateTime createdDate
+- MemberEntity createrId
+- String description
+- IssueEntity issue
+}
+
+class com.se.demo.service.MemberService {
++ MemberRepository memberRepository
++ MemberEntity signup(MemberDTO)
++ MemberEntity login(MemberDTO)
++ MemberEntity getLoginUserById(String)
++ MemberEntity getLoginUserByLoginNickname(String)
++ boolean checkId(String)
++ int findByNickname(String)
+}
+
+
+class com.se.demo.IssueConsole {
++ {static} void main(String[])
+- {static} void findIssueById(Scanner,RestTemplate,String)
+- {static} void findMyIssues(Scanner,RestTemplate,String)
+- {static} void createIssue(Scanner,IssueService)
+- {static} void updateIssueState(Scanner,IssueService)
+- {static} void searchIssues(Scanner,RestTemplate,String)
+}
+
+class com.se.demo.dto.ProjectDTO {
+- int id
+- String title
+- int leader_id
+- List<IssueDTO> issues
+- List<MemberDTO> members
++ {static} ProjectDTO toProjectDTO(ProjectEntity)
++ {static} List<ProjectDTO> toProjectDTOList(List<ProjectEntity>)
+}
+
+
+class com.se.demo.controller.ProjectController {
+- ProjectService projectService
++ ProjectDTO createProject(ProjectDTO)
++ ResponseProjectDTO findByProjectId(int)
++ List<ResponseProjectDTO> findByUserId(int)
++ List<ResponseIssueDTO> findIssuesByProjectId(int)
++ IssueDTO createIssue(IssueDTO)
++ ProjectDTO inviteMember(int,int)
++ List<MonthlyAnalysisDTO> searchIssuesAnalysis(Integer)
+}
+
+
+class com.se.demo.controller.IssueController {
+- IssueService issueService
++ ResponseIssueDTO findById(Integer)
++ List<ResponseIssueDTO> findMyIssues(Integer)
++ ResponseEntity<?> updateIssueState(Integer,Integer,ChangeIssueStateRequest)
++ List<IssueDTO> search(String)
+}
+
+
+class com.se.demo.MemberConsole {
++ {static} void main(String[])
+- {static} void signup(String,RestTemplate,MemberDTO)
+- {static} void login(String,RestTemplate,MemberDTO)
+}
+
+class com.se.demo.dto.CommentDTO {
+- int id
+- int creater_id
+- String description
+- LocalDateTime created_date
+- int issue_id
+}
+
+class com.se.demo.IssueTrackingApplication {
++ {static} void main(String[])
++ WebMvcConfigurer corsConfigurer()
+}
+
+class com.se.demo.controller.CustomErrorController {
++ String handleError()
+}
+
+class com.se.demo.controller.CommentController {
+- CommentService commentService
+- MemberService memberService
+- MemberRepository memberRepository
++ ResponseEntity<List<CommentDTO>> getCommentsForIssue(int)
++ ResponseEntity<?> saveComment(CommentDTO,HttpServletRequest)
++ String showSearchPage()
++ String searchIssues(String,Model)
+}
+
+
+class com.se.demo.utils.ApiUtils {
++ {static} ResponseEntity<ApiResponse<T>> success(T)
++ {static} ResponseEntity<ApiResponse<T>> error(String,HttpStatus)
+}
+
+class com.se.demo.utils.ApiUtils$ApiResponse {
+- boolean success
+- T data
+- String error
+- LocalDateTime timestamp
++ boolean isSuccess()
++ void setSuccess(boolean)
++ T getData()
++ void setData(T)
++ String getError()
++ void setError(String)
++ LocalDateTime getTimestamp()
++ void setTimestamp(LocalDateTime)
+}
+
+
+class com.se.demo.controller.MemberController {
+- MemberService memberService
++ ResponseEntity<Object> signup(MemberDTO)
++ ResponseEntity<?> login(MemberDTO,BindingResult,HttpServletRequest,Model)
++ int getUser(String)
+}
+
+
+class com.se.demo.dto.MemberDTO {
+- int user_id
+- String nickname
+- String password
+- List<ProjectDTO> projects
++ String getId()
++ {static} MemberDTO toMemberDTO(MemberEntity)
+}
+
+
+class com.se.demo.service.ProjectService {
+- ProjectRepository projectRepository
+- MemberRepository memberRepository
+- IssueRepository issueRepository
+- IssueService issueService
++ ProjectEntity save(ProjectDTO)
++ ResponseProjectDTO findById(int)
++ List<ResponseProjectDTO> findByUserId(int)
++ List<ResponseIssueDTO> findByProjectId(int)
++ IssueEntity createIssue(IssueDTO)
++ ProjectDTO inviteMember(int,int)
++ List<MonthlyAnalysisDTO> countAnalysis(Integer)
+}
+
+
+interface com.se.demo.repository.IssueRepository {
+~ List<IssueEntity> findByReporterIdOrAssigneeIdOrPlId(Integer,Integer,Integer)
+~ IssueEntity findById(IssueEntity)
+~ List<IssueEntity> findByState(String)
+~ List<IssueEntity> findByTitleContaining(String)
+~ List<IssueEntity> findByReporterId(int)
+~ List<IssueEntity> findByAssigneeId(int)
+~ List<IssueEntity> findByProjectId(int)
+}
+
+class com.se.demo.service.CommentService {
+- CommentRepository commentRepository
+- MemberRepository memberRepository
+- IssueRepository issueRepository
++ CommentEntity save(CommentDTO,String,int)
++ List<IssueEntity> search(String)
++ List<CommentDTO> findAllByIssueId(int)
++ CommentEntity toCommentEntity(CommentDTO,IssueEntity,MemberEntity)
++ CommentDTO toCommentDTO(CommentEntity)
+}
+
+
+class com.se.demo.dto.ResponseProjectDTO {
+- ProjectDTO projectDTO
+- String leader_nickname
+}
+
+class com.se.demo.CommentConsole {
++ {static} void main(String[])
+}
+
+interface com.se.demo.repository.CommentRepository {
+~ List<CommentEntity> findByIssueId(int)
+}
+
+class com.se.demo.service.IssueService {
++ IssueRepository issueRepository
++ ProjectRepository projectRepository
+- MemberRepository memberRepository
++ IssueEntity createIssue(IssueDTO)
++ ResponseIssueDTO findById(Integer)
++ List<ResponseIssueDTO> findMyIssues(Integer)
++ IssueDTO updateIssue(IssueDTO)
++ List<IssueDTO> search(String)
++ boolean checkProjMember(Integer,IssueDTO)
+}
+
+
+class com.se.demo.entity.BaseEntity {
+- LocalDateTime date
+}
+
+class com.se.demo.dto.ChangeIssueStateRequest {
+- Integer assignee_id
+- String oldState
+- String newState
+}
+
+
+
+org.springframework.data.jpa.repository.JpaRepository <|-- com.se.demo.repository.MemberRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- com.se.demo.repository.ProjectRepository
+com.se.demo.entity.BaseEntity <|-- com.se.demo.entity.IssueEntity
+org.springframework.boot.web.servlet.error.ErrorController <|.. com.se.demo.controller.CustomErrorController
+com.se.demo.utils.ApiUtils +.. com.se.demo.utils.ApiUtils$ApiResponse
+org.springframework.data.jpa.repository.JpaRepository <|-- com.se.demo.repository.IssueRepository
+org.springframework.data.jpa.repository.JpaRepository <|-- com.se.demo.repository.CommentRepository
+@enduml

@@ -59,14 +59,16 @@ public class ProjectConsole {
         projectEntity.setId(1);
         Scanner scanner = new Scanner(System.in);
 
+
         System.out.println("Enter project Title: ");
         String title = scanner.next();
         projectEntity.setTitle(title);
 
         System.out.println("Enter project Leader id: ");
+        String leaderNickname = scanner.next();
         int Leader_id = scanner.nextInt();
         projectEntity.setLeader_id(Leader_id);
-// 멤버 리스트 생성
+        // 멤버 리스트 생성
         List<MemberEntity> memberEntities = new ArrayList<>();
 
         // 사용자로부터 멤버 정보 입력 받기
@@ -90,26 +92,6 @@ public class ProjectConsole {
 
         // 멤버 엔티티 목록을 프로젝트 엔티티에 설정
         projectEntity.setMembers(memberEntities);
-
-// 멤버 엔티티 목록을 프로젝트 엔티티에 설정
-      //  projectEntity.setMembers(members);
-
-        // Members 추가
-        /*MemberDTO member1 = new MemberDTO();
-        member1.setUser_id(1);
-        member1.setNickname("john");
-        member1.setPassword("123");
-
-        MemberDTO member2 = new MemberDTO();
-        member2.setUser_id(2);
-        member2.setNickname("jane");
-        member2.setPassword("456");
-
-        // 멤버 리스트에 추가
-        List<MemberDTO> members = new ArrayList<>();
-        members.add(member1);
-        members.add(member2);*/
-
 
         //dto 생성
         ProjectDTO projectDTO = new ProjectDTO();

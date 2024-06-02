@@ -20,4 +20,22 @@ public class ResponseIssueDTO {
         this.responseIssue = issueDTO;
     }
 
+    public String getTitle() {
+        return null;
+    }
+
+    public String getId() { return null;
+    }
+
+    public String getDescription() {
+        return null;
+    }
+
+    public String getCreatedDate() {
+        return null;
+    }
+
+    public String getCreatorId() {
+        return null;
+    }
 }
