@@ -31,22 +31,10 @@ import java.util.Scanner;
 public class IssueConsole {
     public static void main(String[] args) {
         String baseUrl = "http://localhost:8081/issue";
-
-
-
-
         Scanner scanner = new Scanner(System.in);
-
         RestTemplate restTemplate = new RestTemplate();
-
-
-        // 스프링 부트 애플리케이션 컨텍스트를 로드합니다.
         ConfigurableApplicationContext context = SpringApplication.run(IssueConsole.class, args);
-        // 이슈 생성
         IssueService issueService = context.getBean(IssueService.class);
-        IssueDTO issueDTO = new IssueDTO();
-
-
 
         while (true) {
             System.out.println("Choose an option:");
@@ -69,10 +57,10 @@ public class IssueConsole {
                     createIssue(scanner, issueService);
                     break;
                 case 4:
-                    updateIssueState(scanner, issueService);
+                   // updateIssueState(scanner, issueService);
                     break;
                 case 5:
-                    searchIssues(scanner, restTemplate, baseUrl);
+                    //searchIssues(scanner, restTemplate, baseUrl);
                     break;
                 case 6:
                     System.exit(0);
@@ -95,8 +83,8 @@ public class IssueConsole {
             System.out.println("Title: " + issue.getTitle());
             System.out.println("Description: " + issue.getDescription());
             System.out.println("Created Date: " + issue.getCreatedDate());
-            //System.out.println("Updated Date: " + issue.getUpdatedDate());
-            System.out.println("Creator ID: " + issue.getCreatorId());
+            System.out.println("Reporter Nickname: " + issue.getReporter_nickname());
+            System.out.println("Assignee Nickname: " + issue.getAssignee_nickname());
         } else {
             System.out.println("Issue not found with ID: " + issueId);
         }
@@ -104,7 +92,7 @@ public class IssueConsole {
 
     private static void findMyIssues(Scanner scanner, RestTemplate restTemplate, String baseUrl) {
         System.out.println("나의 모든 이슈 조회");
-        System.out.print("Enter UserId: ");
+        System.out.print("Enter User ID: ");
         int userId = scanner.nextInt();
         ResponseEntity<ResponseIssueDTO[]> findMyIssuesResponse = restTemplate.getForEntity(baseUrl + "/my/" + userId, ResponseIssueDTO[].class);
         ResponseIssueDTO[] issues = findMyIssuesResponse.getBody();
@@ -141,45 +129,53 @@ public class IssueConsole {
         System.out.println("Created Issue: " + createdIssueEntity);
     }
 
-    private static void updateIssueState(Scanner scanner, IssueService issueService) {
-        IssueDTO issueDTO = new IssueDTO();
-        System.out.println("이슈 상태 변경");
-        System.out.println("Enter issue title: ");
-        String title = scanner.next();
-        issueDTO.setTitle(title);
+   /* private static void updateIssueState(Scanner scanner, IssueService issueService) {
+        ResponseEntity<ResponseIssueDTO> findByIdResponse = restTemplate.getForEntity(baseUrl + "/" + issueId, ResponseIssueDTO.class);
+        ResponseIssueDTO issue = findByIdResponse.getBody();
 
-        ChangeIssueStateRequest changeIssueStateRequest = new ChangeIssueStateRequest();
-        System.out.print("Enter old state: ");
-        String oldState = scanner.next();
-        changeIssueStateRequest.setOldState(oldState);
+        if (issue == null) {
+            System.out.println("Issue not found with ID: " + issueId);
+            return;
+        }
 
+        // 이슈의 현재 상태 출력
+        System.out.println("Current State of Issue:");
+        System.out.println("ID: " + issue.getId());
+        System.out.println("Title: " + issue.getTitle());
+        System.out.println("Current State: " + issue.getState());
+
+        // 새로운 상태 입력
         System.out.print("Enter new state: ");
         String newState = scanner.next();
+
+        // 새로운 상태를 저장할 DTO 생성
+        ChangeIssueStateRequest changeIssueStateRequest = new ChangeIssueStateRequest();
+        changeIssueStateRequest.setOldState(issue.getState());
         changeIssueStateRequest.setNewState(newState);
 
-        System.out.println("Enter reporter ID: ");
-        int reporterId = scanner.nextInt();
-        issueDTO.setReporter_id(reporterId);
+        // assignee_id 입력
+        if (newState.equals("assigned")) {
+            System.out.print("Enter assignee ID: ");
+            int assigneeId = scanner.nextInt();
+            changeIssueStateRequest.setAssignee_id(assigneeId);
+        }
 
+        // 이슈 서비스를 사용하여 상태 변경 요청
+        try {
+            IssueDTO updateIssueStateResponse = issueService.updateIssue(issueId, changeIssueStateRequest);
+            System.out.println("Update Issue State Response: " + updateIssueStateResponse);
+        } catch (Exception e) {
+            System.err.println("Error updating issue state: " + e.getMessage());
+        }
+    }*/
 
-        System.out.print("Enter assignee ID: ");
-        int assigneeId = scanner.nextInt();
-        changeIssueStateRequest.setAssignee_id(assigneeId);
-        IssueEntity createdIssueEntity = issueService.createIssue(issueDTO);
-
-
-        IssueDTO updateIssueStateResponse = issueService.updateIssue(issueDTO);
-        System.out.println("Update Issue State Response: " + updateIssueStateResponse);
-
-    }
-
-    private static void searchIssues(Scanner scanner, RestTemplate restTemplate, String baseUrl) {
+    /*private static void searchIssues(Scanner scanner, RestTemplate restTemplate, String baseUrl) {
         System.out.print("Enter keyword to search for issues: ");
         String keyword = scanner.next();
 
         List<IssueDTO> searchResults;
         try {
-            String searchUrl = baseUrl + "/issues/search?keyword=" + keyword;
+            String searchUrl = baseUrl + "/search?keyword=" + keyword;
             ResponseEntity<IssueDTO[]> response = restTemplate.getForEntity(searchUrl, IssueDTO[].class);
             searchResults = Arrays.asList(response.getBody());
         } catch (HttpClientErrorException e) {
@@ -189,22 +185,8 @@ public class IssueConsole {
                 System.err.println("Error searching for issues: " + e.getMessage());
             }
             return;
-        } catch (Exception e) {
-            System.err.println("Unexpected error: " + e.getMessage());
-            return;
-        }
-
-        if (searchResults != null && !searchResults.isEmpty()) {
-            System.out.println("Search Results:");
-            for (IssueDTO issue : searchResults) {
-                System.out.println(issue);
-            }
-        } else {
-            System.out.println("No issues found with the keyword: " + keyword);
-        }
-    }
+        }*/
 
 }
-
 // ResponseIssueDTO 클래스 정의 (필드와 getter 메서드 포함)
 

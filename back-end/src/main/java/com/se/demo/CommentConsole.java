@@ -97,16 +97,14 @@ public class CommentConsole {
             CommentDTO savedComment = response.getBody();
             System.out.println("Saved Comment: " + savedComment);
         } catch (HttpClientErrorException e) {
-            if (e.getStatusCode() == HttpStatus.BAD_REQUEST) {
-                System.out.println("Invalid member nickname or issue ID.");
+            if (e.getStatusCode() == HttpStatus.CONFLICT) {
+                System.out.println("The issue ID or member ID is invalid.");
             } else {
                 System.err.println("Failed to save comment: " + e.getMessage());
             }
         } catch (Exception e) {
             System.err.println("Failed to save comment: " + e.getMessage());
         }
-
-
 
 
 
